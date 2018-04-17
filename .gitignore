@@ -1,0 +1,7 @@
+# root files
+root/*.pcm
+root/*.d
+root/*_C.so
+
+# Ntuplefiles
+EDNTuplesFiles

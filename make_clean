@@ -1,0 +1,5 @@
+#! /bin/sh
+
+rm -fr root/*.pcm
+rm -fr root/*.d
+rm -fr root/*_C.so
