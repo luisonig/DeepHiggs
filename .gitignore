@@ -5,3 +5,9 @@ root/*_C.so
 
 # Ntuplefiles
 EDNTuplesFiles
+
+# python compiled files
+*.pyc
+
+# commands
+cmd*

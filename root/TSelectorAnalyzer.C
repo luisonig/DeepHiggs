@@ -1,4 +1,5 @@
 #include <fstream>
+#include <stdlib.h>
 #ifndef NDEBUG
   #include <iostream>
 #endif
@@ -88,8 +89,19 @@ void TSelectorAnalyzer::Notify()
 bool TSelectorAnalyzer::Process()
 {
 
-  TestAnalysis();
-
+  if(runmode == 1){
+    // run analysis with observables
+    ObservablesAnalysis();
+    
+  }  else if (runmode == 2){
+    // run analysis using jet momenta
+    JetsAnalysis();
+    
+  } else {
+    std::cout<<"runmode not valid, abort"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+  
   return true;
 }
 
@@ -107,17 +119,10 @@ void TSelectorAnalyzer::SlaveTerminate()
 }
 
 
-void TSelectorAnalyzer::TestAnalysis()
+void TSelectorAnalyzer::ObservablesAnalysis()
 {
-
-  // ALPHAS
-  //const std::string pdfset("CT10nlo");
-  //LHAPDF::initPDFSet(11000, pdfset, 0);
-  //std::cout<<"==================== ANALYZING ====================="<<std::endl;
   PseudoJetVector particles;
-  //fastjet::PseudoJet Hmom;
-  //PseudoJetVector partons;
-
+  
   Double_t Etot = 0.0;
 
   for (Int_t j=0; j<get_nparticle(); j++) {
@@ -133,23 +138,17 @@ void TSelectorAnalyzer::TestAnalysis()
 
   // Create and fill particle kinematic arrays:
   for (Int_t i=0; i<get_nparticle(); i++){
-
     fastjet::PseudoJet vec = fastjet::PseudoJet(get_px(i), get_py(i), get_pz(i), get_E(i));
     vec.set_user_index(get_kf(i));
     particles.push_back(vec);
   }
-
-  //PrintEvent(particles);
-  
-  
+    
   //now passing final state partons to fastjet
   PseudoJetVector jetinput;
   for (Int_t i=1; i<get_nparticle(); i++){
-    
     fastjet::PseudoJet vec = fastjet::PseudoJet(get_px(i), get_py(i), get_pz(i), get_E(i));
     jetinput.push_back(vec);
   }  
-
 
   double R(0.4);
   fastjet::JetDefinition jet_definition;
@@ -205,10 +204,6 @@ void TSelectorAnalyzer::TestAnalysis()
    me_weight.push_back(orig_me_wgt());
   }
   
-  
-  
-  
-
  //  NOT NEEDED HERE, BUT KEEP JUST IN CASE: //
 
  /*  std::map<subprocess, int>::iterator it;
@@ -226,6 +221,70 @@ void TSelectorAnalyzer::TestAnalysis()
 
 }
 
+void TSelectorAnalyzer::JetsAnalysis()
+{
+
+  PseudoJetVector particles;
+  
+  Double_t Etot = 0.0;
+
+  for (Int_t j=0; j<get_nparticle(); j++) {
+    Etot+=get_E(j);
+  }
+
+  fastjet::PseudoJet vec1 = fastjet::PseudoJet(0., 0., get_x1()*Etot/(get_x1()+get_x2()), get_x1()*Etot/(get_x1()+get_x2()));
+  vec1.set_user_index(get_id1());
+  fastjet::PseudoJet vec2 = fastjet::PseudoJet(0., 0.,-get_x2()*Etot/(get_x1()+get_x2()), get_x2()*Etot/(get_x1()+get_x2()));
+  vec2.set_user_index(get_id2());
+  particles.push_back(vec1);
+  particles.push_back(vec2);
+
+  // Create and fill particle kinematic arrays:
+  for (Int_t i=0; i<get_nparticle(); i++){
+    fastjet::PseudoJet vec = fastjet::PseudoJet(get_px(i), get_py(i), get_pz(i), get_E(i));
+    vec.set_user_index(get_kf(i));
+    particles.push_back(vec);
+  }
+    
+  //now passing final state partons to fastjet
+  PseudoJetVector jetinput;
+  for (Int_t i=1; i<get_nparticle(); i++){    
+    fastjet::PseudoJet vec = fastjet::PseudoJet(get_px(i), get_py(i), get_pz(i), get_E(i));
+    jetinput.push_back(vec);
+  }  
+
+  double R(0.4);
+  fastjet::JetDefinition jet_definition;
+  jet_definition = fastjet::JetDefinition(fastjet::antikt_algorithm, R);  
+  fastjet::ClusterSequence cs(jetinput, jet_definition);
+  double jet_ptmin(25.0);
+  PseudoJetVector unsortedjets = cs.inclusive_jets(jet_ptmin);
+  PseudoJetVector jets = fastjet::sorted_by_pt(unsortedjets);
+
+  // Multiplicity:
+  //std::cout<<"----> "<<multip<<std::endl;
+
+  bool accept_event = false;
+  // Apply cuts:
+  // multiplicity
+  if (jets.size() >= multip) accept_event = true;
+  if (accept_event){
+    // rapidity
+    for(unsigned i=0; i<jets.size(); i++){
+      if (jets[i].rap() > 4.5 ) accept_event = false;
+    }
+    // VBF mjj
+    if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
+  }
+  if (accept_event){
+
+    for (unsigned i=0; i<jets.size(); i++){
+      for (unsigned j=0; j<4; j++){
+	jetsvector.push_back(jets[i][j]);
+      }
+    }
+  }
+}
 
 
 

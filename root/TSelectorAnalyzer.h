@@ -33,10 +33,14 @@ class TSelectorAnalyzer : public TSelectorMain
   fastjet::PseudoJet get_vec(int i) const;
 
   unsigned int multip;  // final state multiplicity
+  unsigned int runmode = 1; // running mode
   
-  void TestAnalysis();
+  void ObservablesAnalysis();
+  void JetsAnalysis();
   void PrintEvent(const PseudoJetVector particles);
 
+  vector<Double_t> jetsvector;
+  
   //--] Analysis stuff:
 
 
