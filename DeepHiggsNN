@@ -294,8 +294,12 @@ def main(ip):
     gp=GlobalParameters()
     
     print "--> Load training data ..."
-
-    x_train, y_train, ggf_size, vbf_size = data.load_data_obs(ip, gp, 'train')
+    
+    if ip.analysis_type == 'obs':
+        x_train, y_train, ggf_size, vbf_size = data.load_data_obs(ip, gp, 'train')
+    elif ip.analysis_type == 'jets':
+        x_train, y_train, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'train')
+        
 
     print(" Size of ggf training sample: %i events" % ggf_size)
     print(" Size of vbf training sample: %i events" % vbf_size)
@@ -309,7 +313,10 @@ def main(ip):
     
     print "--> Load development data ..."
 
-    x_devel, y_devel, ggf_size, vbf_size = data.load_data_obs(ip, gp, 'devel')
+    if ip.analysis_type == 'obs':
+        x_devel, y_devel, ggf_size, vbf_size = data.load_data_obs(ip, gp, 'devel')
+    elif ip.analysis_type == 'jets':
+        x_devel, y_devel, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'devel')
 
     print(" Size of ggf develop sample: %i events" % ggf_size)
     print(" Size of vbf develop sample: %i events" % vbf_size)
@@ -658,6 +665,7 @@ class InputParameters:
         parser.add_argument('--learning_rate', type=float, dest="learning_rate", default=0.0001, help='Initial learning rate')
         parser.add_argument('--optimizer', type=str, dest="optimizer", default="Adam", help='Optimizer to use, choice among: Adam, GraDe, Adagrad')
         parser.add_argument('--makeplots', action='store_true', dest="makeplots", default=False, help='Whether to generate observables scatter plots')
+        parser.add_argument('--analysis_type',  dest="analysis_type", default="obs", help="If set to 'obs', high-level observables are used as input variables, if set to 'jets', the four-momenta of the jets are used as input variables")
     
         args            = parser.parse_args()
         #self.mode       = args.MODE
@@ -676,6 +684,7 @@ class InputParameters:
         self.learning_rate   = args.learning_rate
         self.optimizer       = args.optimizer
         self.makeplots       = args.makeplots
+        self.analysis_type   = args.analysis_type
         
         #if self.outfolder:
             #if not os.path.isdir(self.outfolder):

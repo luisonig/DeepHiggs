@@ -223,7 +223,6 @@ void TSelectorAnalyzer::ObservablesAnalysis()
 
 void TSelectorAnalyzer::JetsAnalysis()
 {
-
   PseudoJetVector particles;
   
   Double_t Etot = 0.0;
@@ -277,6 +276,8 @@ void TSelectorAnalyzer::JetsAnalysis()
     if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
   }
   if (accept_event){
+      
+   pth.push_back(particles[2].pt()); //use this to determine number of events (should be replaced)           
 
     for (unsigned i=0; i<jets.size(); i++){
       for (unsigned j=0; j<4; j++){
