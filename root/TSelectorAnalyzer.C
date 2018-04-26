@@ -23,9 +23,8 @@
 // --------------------------------------------------------------------------- //
 
 TSelectorAnalyzer::TSelectorAnalyzer()
-  : multip(0)
-    //  , event_groups(0),
-    //    event_trials(1), new_event(1)
+  : multip(0), call_count(0.), event_count(0.), event_binned(0.)
+    //  , event_groups(0), new_event(1)
 {
 
   // extra alphas powers settings
@@ -89,6 +88,9 @@ void TSelectorAnalyzer::Notify()
 bool TSelectorAnalyzer::Process()
 {
 
+  call_count  += 1;
+  event_count += get_ncount();
+  
   if(runmode == 1){
     // run analysis with observables
     ObservablesAnalysis();
@@ -120,7 +122,7 @@ void TSelectorAnalyzer::SlaveTerminate()
 
 
 void TSelectorAnalyzer::ObservablesAnalysis()
-{
+{ 
   PseudoJetVector particles;
   
   Double_t Etot = 0.0;
@@ -174,6 +176,7 @@ void TSelectorAnalyzer::ObservablesAnalysis()
     if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
   }
   if (accept_event){
+    event_binned += 1;
    //returning Higgs pT
    pth.push_back(particles[2].pt());      
    //returning leading and subleading jet pT
@@ -276,8 +279,8 @@ void TSelectorAnalyzer::JetsAnalysis()
     if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
   }
   if (accept_event){
-      
-   pth.push_back(particles[2].pt()); //use this to determine number of events (should be replaced)           
+
+    event_binned += 1;
 
     for (unsigned i=0; i<jets.size(); i++){
       for (unsigned j=0; j<4; j++){

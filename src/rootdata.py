@@ -90,6 +90,7 @@ class RootData:
         AnalyzerSelector = ROOT.TSelectorAnalyzer()
         AnalyzerSelector.multip = ip.multip
         TReader.addSelector(AnalyzerSelector)
+        AnalyzerSelector.runmode = 1
         
         prc_type = []
         obs_list = []
@@ -111,7 +112,7 @@ class RootData:
         else:
             chain.Process(TReader, "", 10*int(ip.events), 0)
             
-        ggf_size = len(AnalyzerSelector.pth)
+        ggf_size = int(AnalyzerSelector.event_binned)
         
         chain = ROOT.TChain("t3")
         if mode == 'train':    
@@ -128,7 +129,7 @@ class RootData:
         else:
             chain.Process(TReader, "", int(ip.events), 0)
             
-        tot_size = len(AnalyzerSelector.pth)
+        tot_size = int(AnalyzerSelector.event_binned)
         vbf_size = tot_size-ggf_size
         
         gp._num_examples = tot_size
@@ -225,7 +226,7 @@ class RootData:
         else:
             chain.Process(TReader, "", 10*int(ip.events), 0)
             
-        ggf_size = len(AnalyzerSelector.pth)
+        ggf_size = int(AnalyzerSelector.event_binned)
         
         chain = ROOT.TChain("t3")
         if mode == 'train':    
@@ -242,7 +243,7 @@ class RootData:
         else:
             chain.Process(TReader, "", int(ip.events), 0)
             
-        tot_size = len(AnalyzerSelector.pth)
+        tot_size = int(AnalyzerSelector.event_binned)
         vbf_size = tot_size-ggf_size
         
         gp._num_examples = tot_size

@@ -15,7 +15,7 @@ import pylab as P
 import matplotlib.pyplot as plt
 
 from matplotlib  import rc
-from rootdata import *
+from src.rootdata import *
 
 # python 2.4 does not have any and all
 try: any, all
@@ -299,7 +299,6 @@ def main(ip):
         x_train, y_train, ggf_size, vbf_size = data.load_data_obs(ip, gp, 'train')
     elif ip.analysis_type == 'jets':
         x_train, y_train, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'train')
-        
 
     print(" Size of ggf training sample: %i events" % ggf_size)
     print(" Size of vbf training sample: %i events" % vbf_size)
@@ -323,6 +322,8 @@ def main(ip):
 
     x_devel_norm = normalize_input(x_devel)
 
+    sys.exit()
+    
     #y_final=train(gp, ip, x_train, y_train, x_devel, y_devel)
     y_final=train(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
     

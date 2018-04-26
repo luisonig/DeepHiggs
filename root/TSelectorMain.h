@@ -162,24 +162,6 @@ class TSelectorMain
   double event_trials;
   bool new_event;
   //--] Counting events
-  
-  vector<Double_t> mjj;
-  vector<Double_t> pth;    
-  vector<Double_t> ptj1;  
-  vector<Double_t> ptj2;  
-  vector<Double_t> dphijj;
-  vector<Double_t> yj1;    
-  vector<Double_t> yj2;
-  vector<Double_t> yj3;
-  vector<Double_t> yjj;    
-  vector<Double_t> zstar;
-  vector<Double_t> zstarj3;
-  vector<Double_t> Rptjet;    
-  vector<Double_t> me_weight;  
-
-  Double_t m_inv(fastjet::PseudoJet p1, fastjet::PseudoJet p2){
-     return sqrt( pow(p1.E()+p2.E(),2)-pow(p1.px()+p2.px(),2)-pow(p1.py()+p2.py(),2)-pow(p1.pz()+p2.pz(),2) );
-  }  
 
 };
 
