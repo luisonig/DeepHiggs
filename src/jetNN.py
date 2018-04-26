@@ -10,16 +10,19 @@ def train_jet(gp, ip, x_train, y_train, x_test, y_test):
 
     """
 
-    #print x_train.shape
-    #print y_train.shape
+    print x_train.shape
+    print y_train.shape
 
-    # print x_test.shape
-    # print y_test.shape
+    print x_test.shape
+    print y_test.shape
 
     print "dropout:", ip.dropout
     # Input/output layer dimensions
     n_x = x_train.shape[0]
     n_y = y_train.shape[0]
+
+    print "Still to be tested"
+    return
     
     #--> set random seed: only for testing purposes - TO BE REMOVED
     tf.set_random_seed(1)

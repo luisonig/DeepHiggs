@@ -207,7 +207,7 @@ class RootData:
         AnalyzerSelector.runmode = 2
         
         prc_type = []
-        obs_list = []
+        jet_list = []
         
         # Define chain and add file list:
         chain = ROOT.TChain("t3")
@@ -253,22 +253,40 @@ class RootData:
         for i in range(vbf_size):
             prc_type.append([0.,1.])
 
+        p_per_event = 4*(ip.multip+1)
+            
         for i in range(tot_size):
             
             mom_list=[]
-            print "hier", len(AnalyzerSelector.jetsvector)
-            for j in range(0,len(AnalyzerSelector.jetsvector[i])):
-                mom_list.append(AnalyzerSelector.jetsvector[i][j])
-                
-            obs_list.append([mom_list])    
 
+            # For energy conservation check:
+            Etot = 0 
+            
+            #print "check: no of events=%i, no of particles per event=12, no of entries=%s" % (tot_size, str(len(AnalyzerSelector.jetsvector)))
+
+            # G.L 25.04.2018:
+            # The following works only for born type events where n_jets = n_partons
+            # (one possibility could be to fill with zeros the missing momenta and
+            #  increase the multiplicity by one..)            
+            for j in range(i*p_per_event,(i+1)*p_per_event):
+
+                if j%4 == 0:
+                    Etot += AnalyzerSelector.jetsvector[j]
                 
+                mom_list.append(AnalyzerSelector.jetsvector[j])
+
+            if Etot > 1E-10:
+                raise ValueError("Energy not conserved in this event, something is wrong! Abort.")
+            
+            jet_list.append([mom_list])    
+
+        #print jet_list
         # So far all ggf data are first and all vbf data are after
         # Reshuffle data such that ggf and vbf events appear alternating:
         perm = np.arange(gp.num_examples())
         np.random.seed(1)
         np.random.shuffle(perm)
-        x_vec = np.array(obs_list)[perm]
+        x_vec = np.array(jet_list)[perm]
         y_vec = np.array(prc_type)[perm]
         
         return x_vec.T, y_vec.T, ggf_size, vbf_size

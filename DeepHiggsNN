@@ -49,17 +49,19 @@ def main(ip):
     
     if ip.analysis_type == 'obs':
         x_train, y_train, ggf_size, vbf_size = data.load_data_obs(ip, gp, 'train')
+
     elif ip.analysis_type == 'jets':
         x_train, y_train, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'train')
 
     print(" Size of ggf training sample: %i events" % ggf_size)
     print(" Size of vbf training sample: %i events" % vbf_size)
 
-    if ip.makeplots and ip.multip == 2:
-        make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yjj","zstar","Rptjet","ME"], x_train, ggf_size, gp._num_examples)
-    if ip.makeplots and ip.multip == 3:
-        make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "ME"], x_train, ggf_size, gp._num_examples)
-
+    if ip.analysis_type == 'obs':
+        if ip.makeplots and ip.multip == 2:
+            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yjj","zstar","Rptjet","ME"], x_train, ggf_size, gp._num_examples)
+        if ip.makeplots and ip.multip == 3:
+            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "ME"], x_train, ggf_size, gp._num_examples)
+    
     x_train_norm = normalize_input(x_train)
     
     print "--> Load development data ..."
@@ -78,15 +80,16 @@ def main(ip):
         #y_final=train(gp, ip, x_train, y_train, x_devel, y_devel)
         y_final=train_obs(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
     elif ip.analysis_type == 'jets':
-        y_final=train_jets(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
-    
-    y_rewrite=[]
-    proc_ind = tf.InteractiveSession().run(tf.argmax(y_final, 1))
-    for i in range(len(proc_ind)):
-        if proc_ind[i]==0:
-            y_rewrite.append([1.,0.])
-        else:
-            y_rewrite.append([0.,1.0])
+        y_final=train_jet(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
+
+    if ip.analysis_type == 'obs':
+        y_rewrite=[]
+        proc_ind = tf.InteractiveSession().run(tf.argmax(y_final, 1))
+        for i in range(len(proc_ind)):
+            if proc_ind[i]==0:
+                y_rewrite.append([1.,0.])
+            else:
+                y_rewrite.append([0.,1.0])
 
     #makeplot("ptH", pthlist_test, weights_test, ggf_size, y_rewrite)
     #makeplot("mj1j2", mjjlist_test, weights_test, ggf_size, y_rewrite)
@@ -199,5 +202,3 @@ if __name__ == '__main__':
     input_parameters.print_parameters()
 
     main(input_parameters)
-
-

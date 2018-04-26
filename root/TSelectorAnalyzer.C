@@ -282,6 +282,11 @@ void TSelectorAnalyzer::JetsAnalysis()
 
     event_binned += 1;
 
+    // Higgs:
+    for (unsigned j=0; j<4; j++){
+      jetsvector.push_back(particles[2][j]);
+    }
+    
     for (unsigned i=0; i<jets.size(); i++){
       for (unsigned j=0; j<4; j++){
 	jetsvector.push_back(jets[i][j]);
