@@ -8,6 +8,10 @@ EDNTuplesFiles
 
 # python compiled files
 *.pyc
+src/*.pyc
+
+# figures
+figures/*
 
 # commands
 cmd*
