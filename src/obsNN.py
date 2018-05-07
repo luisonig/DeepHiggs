@@ -13,8 +13,9 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
     #print x_train.shape
     #print y_train.shape
 
-    # print x_test.shape
-    # print y_test.shape
+    #print x_test.shape
+    #print y_test.shape
+    #sys.exit()
 
     print "dropout:", ip.dropout
     # Input/output layer dimensions

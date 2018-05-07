@@ -21,8 +21,8 @@ def train_jet(gp, ip, x_train, y_train, x_test, y_test):
     n_x = x_train.shape[0]
     n_y = y_train.shape[0]
 
-    print "Still to be tested"
-    return
+    #print "Still to be tested"
+    #return
     
     #--> set random seed: only for testing purposes - TO BE REMOVED
     tf.set_random_seed(1)

@@ -274,11 +274,12 @@ class RootData:
                     Etot += AnalyzerSelector.jetsvector[j]
                 
                 mom_list.append(AnalyzerSelector.jetsvector[j])
+            #print 'momlist', mom_list
 
             if Etot > 1E-10:
                 raise ValueError("Energy not conserved in this event, something is wrong! Abort.")
             
-            jet_list.append([mom_list])    
+            jet_list.append(mom_list)
 
         #print jet_list
         # So far all ggf data are first and all vbf data are after
