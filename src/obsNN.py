@@ -129,8 +129,10 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
 
         if i==ip.max_steps:
             summary, acc, diff, y, y_ = sess.run([merged, accuracy, diff, y, y_], feed_dict=feed_dict(gp, False))
-            ysoft= tf.nn.softmax(y, dim=0)
+            ysoft = tf.nn.softmax(y, dim=0)
+            yprob = sess.run(ysoft)
 
+            # save model
             save_path = saver.save(sess, ip.log_dir + '/models/'+ip.run_dir)
             print("Model saved in path: %s" % save_path)
 
@@ -139,8 +141,9 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
             print y.shape
             print y
             print ysoft.shape
-            print sess.run(ysoft)
-            print "Total number of events " , len(x_test)
+            print yprob
+            
+            print "Total number of events " , x_test.shape[1]
             nr_ggf=0
             nr_vbf=0
             nr_ggf_rec=0
