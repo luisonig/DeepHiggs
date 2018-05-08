@@ -52,7 +52,7 @@ def main(ip):
         x_train, y_train, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_obs(ip, gp, 'train')
 
     elif ip.analysis_type == 'jets':
-        x_train, y_train, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'train')
+        x_train, y_train, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_jets(ip, gp, 'train')
 
     else:
         raise KeyError("Allowed 'analysis_type' values are 'obs' and 'jets'")
@@ -73,7 +73,7 @@ def main(ip):
     if ip.analysis_type == 'obs':
         x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_obs(ip, gp, 'devel')
     elif ip.analysis_type == 'jets':
-        x_devel, y_devel, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'devel')
+        x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_jets(ip, gp, 'devel')
 
     print(" Size of ggf develop sample: %i events" % ggf_size)
     print(" Size of vbf develop sample: %i events" % vbf_size)

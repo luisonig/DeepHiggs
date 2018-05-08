@@ -230,6 +230,7 @@ class RootData:
             chain.Process(TReader, "", 10*int(ip.events), 0)
             
         ggf_size = int(AnalyzerSelector.event_binned)
+        ggf_event_count = int(AnalyzerSelector.event_count)
         
         chain = ROOT.TChain("t3")
         if mode == 'train':    
@@ -247,8 +248,10 @@ class RootData:
             chain.Process(TReader, "", int(ip.events), 0)
             
         tot_size = int(AnalyzerSelector.event_binned)
+        tot_event_count = int(AnalyzerSelector.event_count)
         vbf_size = tot_size-ggf_size
-        
+        vbf_event_count = tot_event_count - ggf_event_count
+
         gp._num_examples = tot_size
             
         for i in range(ggf_size):
@@ -297,6 +300,6 @@ class RootData:
         x_vec = np.array(jet_list)[perm]
         y_vec = np.array(prc_type)[perm]
         
-        return x_vec.T, y_vec.T, ggf_size, vbf_size
+        return x_vec.T, y_vec.T, ggf_size, vbf_size, ggf_event_count, vbf_event_count
     
 
