@@ -170,7 +170,7 @@ void TSelectorAnalyzer::ObservablesAnalysis()
   if (accept_event){
     // rapidity
     for(unsigned i=0; i<jets.size(); i++){
-      if (jets[i].rap() > 4.5 ) accept_event = false;
+      if (abs(jets[i].rap()) > 4.5 ) accept_event = false;
     }
     // VBF mjj
     if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
@@ -204,7 +204,8 @@ void TSelectorAnalyzer::ObservablesAnalysis()
    dphijj.push_back(abs(jets[0].phi()-jets[1].phi()));
    
    //returning weight;
-   me_weight.push_back(orig_me_wgt());
+   //me_weight.push_back(orig_me_wgt());
+   me_weight.push_back(orig_weight());
   }
   
  //  NOT NEEDED HERE, BUT KEEP JUST IN CASE: //

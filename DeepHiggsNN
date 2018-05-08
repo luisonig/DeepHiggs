@@ -18,6 +18,7 @@ import numpy as np
 from src.rootdata import *
 from src.plots import *
 from src.util import *
+from src.analysis import *
 from src.obsNN import *
 from src.jetNN import *
 
@@ -48,7 +49,7 @@ def main(ip):
     print "--> Load training data ..."
     
     if ip.analysis_type == 'obs':
-        x_train, y_train, ggf_size, vbf_size = data.load_data_obs(ip, gp, 'train')
+        x_train, y_train, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_obs(ip, gp, 'train')
 
     elif ip.analysis_type == 'jets':
         x_train, y_train, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'train')
@@ -70,14 +71,23 @@ def main(ip):
     print "--> Load development data ..."
 
     if ip.analysis_type == 'obs':
-        x_devel, y_devel, ggf_size, vbf_size = data.load_data_obs(ip, gp, 'devel')
+        x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_obs(ip, gp, 'devel')
     elif ip.analysis_type == 'jets':
         x_devel, y_devel, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'devel')
 
     print(" Size of ggf develop sample: %i events" % ggf_size)
     print(" Size of vbf develop sample: %i events" % vbf_size)
 
+    print(" Size of ggf event sample: %i events" % ggf_event_count)
+    print(" Size of vbf event sample: %i events" % vbf_event_count)
+
     x_devel_norm = normalize_input(x_devel)
+
+    #---[ test XS:
+    # Trial analysis:
+    #compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count)
+    #sys.exit(0)
+    #---] test XS
     
     if ip.analysis_type == 'obs':
         y_final=train_obs(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
