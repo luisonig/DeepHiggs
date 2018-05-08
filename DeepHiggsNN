@@ -53,6 +53,9 @@ def main(ip):
     elif ip.analysis_type == 'jets':
         x_train, y_train, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'train')
 
+    else:
+        raise KeyError("Allowed 'analysis_type' values are 'obs' and 'jets'")
+
     print(" Size of ggf training sample: %i events" % ggf_size)
     print(" Size of vbf training sample: %i events" % vbf_size)
 
@@ -77,7 +80,6 @@ def main(ip):
     x_devel_norm = normalize_input(x_devel)
     
     if ip.analysis_type == 'obs':
-        #y_final=train(gp, ip, x_train, y_train, x_devel, y_devel)
         y_final=train_obs(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
     elif ip.analysis_type == 'jets':
         y_final=train_jet(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)

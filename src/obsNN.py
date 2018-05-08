@@ -6,7 +6,7 @@ from src.util import *
 
 def train_obs(gp, ip, x_train, y_train, x_test, y_test):
     """
-    
+
 
     """
 
@@ -21,10 +21,10 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
     # Input/output layer dimensions
     n_x = x_train.shape[0]
     n_y = y_train.shape[0]
-    
+
     #--> set random seed: only for testing purposes - TO BE REMOVED
     tf.set_random_seed(1)
-  
+
     sess = tf.InteractiveSession(config=tf.ConfigProto(inter_op_parallelism_threads=8))
 
     # Input placeholders
@@ -47,7 +47,7 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
     # Do not apply softmax activation yet, see below.
     y = nn_layer(dropped, n_y, 50, 'layer3', act=tf.identity)
     #y = nn_final_layer(dropped, n_y, 50, 'layer3')
-    
+
     with tf.name_scope('cross_entropy'):
         # The raw formulation of cross-entropy,
         #
@@ -85,6 +85,9 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
     devel_writer = tf.summary.FileWriter(ip.log_dir + '/devel/'+ip.run_dir)
     tf.global_variables_initializer().run()
 
+    # Add ops to save and restore all the variables.
+    saver = tf.train.Saver()
+
     def feed_dict(gp, train):
         """ Make a TensorFlow feed_dict: maps data onto Tensor placeholders. """
         if train:
@@ -108,7 +111,7 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
             summary, acc = sess.run([merged, accuracy], feed_dict=feed_dict(gp, False))
             devel_writer.add_summary(summary, i)
             print('Accuracy at step %s: %s' % (i, acc))
-            
+
         else:  # Record train set summaries, and train
             if i % 100 == 99:  # Record execution stats
                 run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
@@ -123,9 +126,14 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
             else:  # Train
                 summary, _ = sess.run([merged, train_step], feed_dict=feed_dict(gp,True))
                 train_writer.add_summary(summary, i)
+
         if i==ip.max_steps:
             summary, acc, diff, y, y_ = sess.run([merged, accuracy, diff, y, y_], feed_dict=feed_dict(gp, False))
             ysoft= tf.nn.softmax(y, dim=0)
+
+            save_path = saver.save(sess, ip.log_dir + '/models/'+ip.run_dir)
+            print("Model saved in path: %s" % save_path)
+
             print diff.shape
             print diff
             print y.shape
@@ -146,15 +154,15 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
                     nr_ggf_rec+=1
                 elif y[0, i]<y[1, i]:
                     nr_vbf_rec+=1
-                
+
             print "Number of GGF events ", nr_ggf
             print "Number of VBF events ", nr_vbf
             print "Number of reconstructed GGF events ", nr_ggf_rec
             print "Number of reconstructed VBF events ", nr_vbf_rec
-            print ""        
+            print ""
 
             prob_range = [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,0.99]
-        
+
             # for prob in prob_range:
             #     x_new=[]
             #     y_new=[]
@@ -180,19 +188,19 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
             #             nr_vbf_rec_new+=1
 
             #     print ""
-            #     print " Results after cut on probability:", prob        
+            #     print " Results after cut on probability:", prob
             #     print "Total number of events ", len(x_new)
             #     print "Number of GGF events ", nr_ggf_new
             #     print "Number of VBF events ", nr_vbf_new
             #     print "Number of reconstructed GGF events ", nr_ggf_rec_new
-            #     print "Number of reconstructed VBF events ", nr_vbf_rec_new        
+            #     print "Number of reconstructed VBF events ", nr_vbf_rec_new
 
             #y_new=np.array(y_new)
             #yuscore_new=np.array(yuscore_new)
             #correct_prediction = tf.equal(tf.argmax(y_new, 1), tf.argmax(yuscore_new, 1))
             #accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
             #print "accuracy_new", sess.run(accuracy)
-            
+
     train_writer.close()
     devel_writer.close()
 
