@@ -136,12 +136,6 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
             save_path = saver.save(sess, ip.log_dir + '/models/'+ip.run_dir)
             print("Model saved in path: %s" % save_path)
 
-            print diff.shape
-            print diff
-            print y.shape
-            print y
-            print ysoft.shape
-            print yprob
             
             print "Total number of events " , x_test.shape[1]
             nr_ggf=0
@@ -164,45 +158,7 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
             print "Number of reconstructed VBF events ", nr_vbf_rec
             print ""
 
-            prob_range = [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,0.99]
-
-            # for prob in prob_range:
-            #     x_new=[]
-            #     y_new=[]
-            #     yuscore_new=[]
-            #     for i in range(len(x_test)):
-            #         if sess.run(ysoft)[i][0] >prob or sess.run(ysoft)[i][1] >prob:
-            #             x_new.append(x_test[i])
-            #             y_new.append(y[i])
-            #             yuscore_new.append(y_[i])
-
-            #     nr_ggf_new=0
-            #     nr_vbf_new=0
-            #     nr_ggf_rec_new=0
-            #     nr_vbf_rec_new=0
-            #     for i in range(len(x_new)):
-            #         if yuscore_new[i][0]==0.0:
-            #             nr_vbf_new +=1
-            #         elif yuscore_new[i][0]==1.0:
-            #             nr_ggf_new+=1
-            #         if y_new[i][0]>y_new[i][1]:
-            #             nr_ggf_rec_new+=1
-            #         elif y_new[i][0]<y_new[i][1]:
-            #             nr_vbf_rec_new+=1
-
-            #     print ""
-            #     print " Results after cut on probability:", prob
-            #     print "Total number of events ", len(x_new)
-            #     print "Number of GGF events ", nr_ggf_new
-            #     print "Number of VBF events ", nr_vbf_new
-            #     print "Number of reconstructed GGF events ", nr_ggf_rec_new
-            #     print "Number of reconstructed VBF events ", nr_vbf_rec_new
-
-            #y_new=np.array(y_new)
-            #yuscore_new=np.array(yuscore_new)
-            #correct_prediction = tf.equal(tf.argmax(y_new, 1), tf.argmax(yuscore_new, 1))
-            #accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-            #print "accuracy_new", sess.run(accuracy)
+            cut_probability(sess,len(x_test), y, y_)
 
     train_writer.close()
     devel_writer.close()

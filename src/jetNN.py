@@ -127,13 +127,8 @@ def train_jet(gp, ip, x_train, y_train, x_test, y_test):
                 train_writer.add_summary(summary, i)
         if i==ip.max_steps:
             summary, acc, diff, y, y_ = sess.run([merged, accuracy, diff, y, y_], feed_dict=feed_dict(gp, False))
-            ysoft= tf.nn.softmax(y, dim=0)
-            #print diff.shape
-            #print diff
-            #print y.shape
-            #print y
-            print 'ysoft shape', ysoft.shape
-            #print 'sess.run(ysoft)', sess.run(ysoft)
+            ysoft= tf.nn.softmax(y, dim=0)            
+            
             print "Total number of events " , len(x_test)
             nr_ggf=0
             nr_vbf=0
@@ -154,50 +149,8 @@ def train_jet(gp, ip, x_train, y_train, x_test, y_test):
             print "Number of reconstructed GGF events ", nr_ggf_rec
             print "Number of reconstructed VBF events ", nr_vbf_rec
             print ""        
-
-            prob_range = [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,0.99]
-        
-            for prob in prob_range:
-                x_new=[]
-                y_new=[]
-                yuscore_new=[]
-                for i in range(len(x_test.transpose())):
-                    
-                    #if sess.run(ysoft)[0][i] >prob or sess.run(ysoft)[1][i] >prob: 
-                    if sess.run(ysoft)[1][i] >prob: 
-                        x_new.append(x_test.transpose()[i])
-                        y_new.append(y.transpose()[i])
-                        yuscore_new.append(y_.transpose()[i])
-                yuscore_new=np.array(yuscore_new)
-                y_new=np.array(y_new)
-                nr_ggf_new=0
-                nr_vbf_new=0
-                nr_ggf_rec_new=0
-                nr_vbf_rec_new=0
-                for i in range(len(x_new)):
-                    if yuscore_new[i][0]==0.0:
-                        nr_vbf_new +=1
-                    elif yuscore_new[i][0]==1.0:
-                        nr_ggf_new+=1
-                    if y_new[i][0]>y_new[i][1]:
-                        nr_ggf_rec_new+=1
-                    elif y_new[i][0]<y_new[i][1]:
-                        nr_vbf_rec_new+=1
-
-                print ""
-                print " Results after cut on probability:", prob        
-                print "Total number of events ", len(x_new)
-                print "Number of GGF events ", nr_ggf_new
-                print "Number of VBF events ", nr_vbf_new
-                #print "S/B", nr_vbf_new/nr_ggf_new
-                print "Number of reconstructed GGF events ", nr_ggf_rec_new
-                print "Number of reconstructed VBF events ", nr_vbf_rec_new        
-
-            #y_new=np.array(y_new)
-            #yuscore_new=np.array(yuscore_new)
-            #correct_prediction = tf.equal(tf.argmax(y_new, 1), tf.argmax(yuscore_new, 1))
-            #accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-            #print "accuracy_new", sess.run(accuracy)
+           
+            cut_probability(sess,len(x_test), y, y_)
             
     train_writer.close()
     devel_writer.close()
