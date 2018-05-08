@@ -274,6 +274,10 @@ class RootData:
                     Etot += AnalyzerSelector.jetsvector[j]
                 
                 mom_list.append(AnalyzerSelector.jetsvector[j])
+            #mom_list.append(AnalyzerSelector.mjj[i])
+            #mom_list.append(AnalyzerSelector.pth[i])
+            #mom_list.append(AnalyzerSelector.ptj1[i])
+            #mom_list.append(AnalyzerSelector.ptj2[i])
             #print 'momlist', mom_list
 
             if Etot > 1E-10:

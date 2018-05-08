@@ -279,6 +279,11 @@ void TSelectorAnalyzer::JetsAnalysis()
     if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
   }
   if (accept_event){
+      
+    mjj.push_back(m_inv(jets[0],jets[1]));
+    pth.push_back(particles[2].pt());      
+    ptj1.push_back(jets[0].pt());
+    ptj2.push_back(jets[1].pt());    
 
     event_binned += 1;
 
