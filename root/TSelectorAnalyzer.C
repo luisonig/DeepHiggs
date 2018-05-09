@@ -205,7 +205,7 @@ void TSelectorAnalyzer::ObservablesAnalysis()
    
    //returning weight;
    //me_weight.push_back(orig_me_wgt());
-   me_weight.push_back(orig_weight());
+   weight.push_back(orig_weight());
   }
   
  //  NOT NEEDED HERE, BUT KEEP JUST IN CASE: //
@@ -284,7 +284,8 @@ void TSelectorAnalyzer::JetsAnalysis()
     mjj.push_back(m_inv(jets[0],jets[1]));
     pth.push_back(particles[2].pt());      
     ptj1.push_back(jets[0].pt());
-    ptj2.push_back(jets[1].pt());    
+    ptj2.push_back(jets[1].pt());
+    weight.push_back(orig_weight());    
 
     event_binned += 1;
 

@@ -56,7 +56,7 @@ class TSelectorAnalyzer : public TSelectorMain
   vector<Double_t> zstar;
   vector<Double_t> zstarj3;
   vector<Double_t> Rptjet;
-  vector<Double_t> me_weight;
+  vector<Double_t> weight;
 
   // Invariant mass
   Double_t m_inv(fastjet::PseudoJet p1, fastjet::PseudoJet p2){

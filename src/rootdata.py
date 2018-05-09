@@ -155,7 +155,7 @@ class RootData:
                                  AnalyzerSelector.yjj[i],
                                  AnalyzerSelector.zstar[i],
                                  AnalyzerSelector.Rptjet[i],
-                                 AnalyzerSelector.me_weight[i]])
+                                 AnalyzerSelector.weight[i]])
                 
             if ip.multip == 3:
                 obs_list.append([AnalyzerSelector.pth[i],
@@ -170,7 +170,7 @@ class RootData:
                                  AnalyzerSelector.zstar[i],
                                  AnalyzerSelector.Rptjet[i],
                                  AnalyzerSelector.zstarj3[i],
-                                 AnalyzerSelector.me_weight[i]])
+                                 AnalyzerSelector.weight[i]])
                 
         # So far all ggf data are first and all vbf data are after
         # Reshuffle data such that ggf and vbf events appear alternating:

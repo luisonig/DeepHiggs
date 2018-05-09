@@ -94,6 +94,7 @@ def main(ip):
     elif ip.analysis_type == 'jets':
         y_final=train_jet(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
 
+
     if ip.analysis_type == 'obs':
         y_rewrite=[]
         proc_ind = tf.InteractiveSession().run(tf.argmax(y_final, 1))
@@ -103,11 +104,13 @@ def main(ip):
             else:
                 y_rewrite.append([0.,1.0])
 
-    #makeplot("ptH", pthlist_test, weights_test, ggf_size, y_rewrite)
-    #makeplot("mj1j2", mjjlist_test, weights_test, ggf_size, y_rewrite)
-    #makeplot("ptj1", ptj1list_test, weights_test, ggf_size, y_rewrite)
-    #makeplot("yj1", yj1list_test, weights_test, ggf_size, y_rewrite)
-    #makeplot("dphijj", dphijjlist_test, weights_test, ggf_size, y_rewrite)
+        #makeplot("ptH", pthlist_test, weights_test, ggf_size, y_rewrite)
+        #makeplot("mj1j2", mjjlist_test, weights_test, ggf_size, y_rewrite)
+        #makeplot("ptj1", ptj1list_test, weights_test, ggf_size, y_rewrite)
+        #makeplot("yj1", yj1list_test, weights_test, ggf_size, y_rewrite)
+        #makeplot("dphijj", dphijjlist_test, weights_test, ggf_size, y_rewrite)
+
+    cut_probability(x_devel_norm,y_final,y_devel, ggf_event_count, vbf_event_count)
 
     print "Run time: %d seconds" % (time.time() - start_time)
 

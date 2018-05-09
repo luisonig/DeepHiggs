@@ -137,30 +137,8 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
             print("Model saved in path: %s" % save_path)
 
             
-            print "Total number of events " , x_test.shape[1]
-            nr_ggf=0
-            nr_vbf=0
-            nr_ggf_rec=0
-            nr_vbf_rec=0
-            for i in range(x_test.shape[1]):
-                if y_[0, i]==0.0:
-                    nr_vbf +=1
-                elif y_[0, i]==1.0:
-                    nr_ggf+=1
-                if y[0, i] > y[1, i]:
-                    nr_ggf_rec+=1
-                elif y[0, i]<y[1, i]:
-                    nr_vbf_rec+=1
-
-            print "Number of GGF events ", nr_ggf
-            print "Number of VBF events ", nr_vbf
-            print "Number of reconstructed GGF events ", nr_ggf_rec
-            print "Number of reconstructed VBF events ", nr_vbf_rec
-            print ""
-
-            cut_probability(sess,len(x_test), y, y_)
 
     train_writer.close()
     devel_writer.close()
 
-    return sess.run(ysoft)
+    return yprob

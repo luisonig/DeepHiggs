@@ -86,6 +86,9 @@ def train_jet(gp, ip, x_train, y_train, x_test, y_test):
     train_writer = tf.summary.FileWriter(ip.log_dir + '/train/'+ip.run_dir, sess.graph)
     devel_writer = tf.summary.FileWriter(ip.log_dir + '/devel/'+ip.run_dir)
     tf.global_variables_initializer().run()
+    
+    # Add ops to save and restore all the variables.
+    saver = tf.train.Saver()    
 
     def feed_dict(gp, train):
         """ Make a TensorFlow feed_dict: maps data onto Tensor placeholders. """
@@ -127,32 +130,16 @@ def train_jet(gp, ip, x_train, y_train, x_test, y_test):
                 train_writer.add_summary(summary, i)
         if i==ip.max_steps:
             summary, acc, diff, y, y_ = sess.run([merged, accuracy, diff, y, y_], feed_dict=feed_dict(gp, False))
-            ysoft= tf.nn.softmax(y, dim=0)            
+            ysoft= tf.nn.softmax(y, dim=0)
+            yprob = sess.run(ysoft)
             
-            print "Total number of events " , len(x_test)
-            nr_ggf=0
-            nr_vbf=0
-            nr_ggf_rec=0
-            nr_vbf_rec=0
-            for i in range(x_test.shape[1]):
-                if y_[0, i]==0.0:
-                    nr_vbf +=1
-                elif y_[0, i]==1.0:
-                    nr_ggf+=1
-                if y[0, i] > y[1, i]:
-                    nr_ggf_rec+=1
-                elif y[0, i]<y[1, i]:
-                    nr_vbf_rec+=1
-                
-            print "Number of GGF events ", nr_ggf
-            print "Number of VBF events ", nr_vbf
-            print "Number of reconstructed GGF events ", nr_ggf_rec
-            print "Number of reconstructed VBF events ", nr_vbf_rec
-            print ""        
-           
-            cut_probability(sess,len(x_test), y, y_)
+            # save model
+            save_path = saver.save(sess, ip.log_dir + '/models/'+ip.run_dir)
+            print("Model saved in path: %s" % save_path)            
+            
+
             
     train_writer.close()
     devel_writer.close()
 
-    return sess.run(ysoft)
+    return yprob

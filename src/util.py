@@ -2,6 +2,7 @@
 
 import numpy as np
 import tensorflow as tf
+from src.analysis import *
 
 
 class GlobalParameters():
@@ -51,19 +52,44 @@ def normalize_input(x_vec):
 
     return x_vec_norm
 
-def cut_probability(sess,n_events,y,y_):
+def cut_probability(x_test,y,y_,ggf_event_count,vbf_event_count):
     """
     Loops over a range of probabilities where events are only accepted if the level of
     confidence of the NN that the event is a signal is large than a given threshold
     
     Arguments:
-    sess -- TensorFlow session
-    n_events -- number of events
+    x_test input variables of NN
     y -- output vector of the NN 
     y_ -- reference vector (true result)
+    ggf_event_count -- number of events in ggf sample (needed for correct XS)
+    vbf_event_count -- number of events in vbf sample (needed for correct XS)
     
     """
-    ysoft= tf.nn.softmax(y, dim=0)
+    n_events=len(x_test[0])
+    print "Total number of events " , x_test.shape[1]
+    nr_ggf=0
+    nr_vbf=0
+    nr_ggf_rec=0
+    nr_vbf_rec=0
+    for i in range(x_test.shape[1]):
+        if y_[0,i]==0.0:
+            nr_vbf +=1
+        elif y_[0, i]==1.0:
+            nr_ggf+=1
+        if y[0, i] > y[1, i]:
+            nr_ggf_rec+=1
+        elif y[0, i]<y[1, i]:
+            nr_vbf_rec+=1
+
+    print "Number of GGF events ", nr_ggf
+    print "Number of VBF events ", nr_vbf
+    print "Number of reconstructed GGF events ", nr_ggf_rec
+    print "Number of reconstructed VBF events ", nr_vbf_rec
+    print ""    
+    
+    plotfile=open('prob_lots.csv','w')
+    plotfile.write('prob,n_events,nr_tot_new,nr_ggf,nr_vbf,xs_ggf,xs_vbf,sb,accuracy\n')
+    
     prob_range = [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,0.99]
 
     for prob in prob_range:
@@ -72,15 +98,15 @@ def cut_probability(sess,n_events,y,y_):
         yuscore_new=[]
         n_events_new=0
         for i in range(n_events):
-            
-            #if sess.run(ysoft)[0][i] >prob or sess.run(ysoft)[1][i] >prob: 
-            if sess.run(ysoft)[1][i] >prob: 
-                #x_new.append(x_test.transpose()[i])
+            #if y[0][i] >prob or y[1][i] >prob: 
+            if y[1][i] >prob: 
+                x_new.append(x_test.transpose()[i])
                 n_events_new +=1
                 y_new.append(y.transpose()[i])
                 yuscore_new.append(y_.transpose()[i])
         yuscore_new=np.array(yuscore_new)
         y_new=np.array(y_new)
+        x_new=np.array(x_new)
         nr_ggf_new=0
         nr_vbf_new=0
         nr_ggf_rec_new=0
@@ -100,17 +126,33 @@ def cut_probability(sess,n_events,y,y_):
         print "Total number of events ", n_events_new
         print "Number of GGF events ", nr_ggf_new
         print "Number of VBF events ", nr_vbf_new
-        #print "S/B", nr_vbf_new/nr_ggf_new
+        
+        if nr_ggf_new > 0:
+            xs_ggf, xs_vbf =compute_XS(x_new.transpose(),yuscore_new.transpose(),nr_ggf_new, nr_vbf_new,ggf_event_count,vbf_event_count)            
+            sb=xs_vbf/xs_ggf
+            print "S/B", xs_vbf/xs_ggf
+        else:
+            xs_ggf='NA'
+            xs_vbf='NA'
+            sb='NA'
         print "Number of reconstructed GGF events ", nr_ggf_rec_new
         print "Number of reconstructed VBF events ", nr_vbf_rec_new        
 
-    #y_new=np.array(y_new)
-    #yuscore_new=np.array(yuscore_new)
-    #correct_prediction = tf.equal(tf.argmax(y_new, 1), tf.argmax(yuscore_new, 1))
-    #accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-    #print "accuracy_new", sess.run(accuracy)
+        #y_new=np.array(y_new)
+        #yuscore_new=np.array(yuscore_new)
+        if nr_ggf_new >0 and nr_vbf_new >0 :
+          correct_prediction = tf.equal(tf.argmax(y_new, 1), tf.argmax(yuscore_new, 1))
+          accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+          sess=tf.InteractiveSession()
+          accuracy= sess.run(accuracy)
+          print "accuracy_new", accuracy
+        else:
+            accuracy='NA'
+        plotfile.write(str(prob)+','+str(n_events)+','+str(n_events_new)+','+str(nr_ggf_new)
+                       +','+str(nr_vbf_new)+','+str(xs_ggf)+','+str(xs_vbf)+','+str(sb)
+                       +','+str(accuracy)+'\n')
     
-
+    plotfile.close()
 
 ##--[ Tensorflow functions:
 def weight_variable(name, shape):
