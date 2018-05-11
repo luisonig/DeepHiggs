@@ -3,6 +3,7 @@
 import numpy as np
 import tensorflow as tf
 from src.analysis import *
+import math
 
 
 class GlobalParameters():
@@ -88,9 +89,9 @@ def cut_probability(x_test,y,y_,ggf_event_count,vbf_event_count):
     print ""    
     
     plotfile=open('prob_lots.csv','w')
-    plotfile.write('prob,n_events,nr_tot_new,nr_ggf,nr_vbf,xs_ggf,xs_vbf,sb,accuracy\n')
+    plotfile.write('prob,n_events,nr_tot_new,nr_ggf,nr_vbf,xs_ggf,xs_vbf,sb,ssqrtb,accuracy\n')
     
-    prob_range = [0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,0.99]
+    prob_range = [0.0,0.25,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,0.99]
 
     for prob in prob_range:
         x_new=[]
@@ -130,6 +131,7 @@ def cut_probability(x_test,y,y_,ggf_event_count,vbf_event_count):
         if nr_ggf_new > 0:
             xs_ggf, xs_vbf =compute_XS(x_new.transpose(),yuscore_new.transpose(),nr_ggf_new, nr_vbf_new,ggf_event_count,vbf_event_count)            
             sb=xs_vbf/xs_ggf
+            ssqrtb = xs_vbf/math.sqrt(xs_ggf)
             print "S/B", xs_vbf/xs_ggf
         else:
             xs_ggf='NA'
@@ -150,7 +152,7 @@ def cut_probability(x_test,y,y_,ggf_event_count,vbf_event_count):
             accuracy='NA'
         plotfile.write(str(prob)+','+str(n_events)+','+str(n_events_new)+','+str(nr_ggf_new)
                        +','+str(nr_vbf_new)+','+str(xs_ggf)+','+str(xs_vbf)+','+str(sb)
-                       +','+str(accuracy)+'\n')
+                       +','+str(ssqrtb)+','+str(accuracy)+'\n')
     
     plotfile.close()
 

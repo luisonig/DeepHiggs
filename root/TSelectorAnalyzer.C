@@ -274,7 +274,7 @@ void TSelectorAnalyzer::JetsAnalysis()
   if (accept_event){
     // rapidity
     for(unsigned i=0; i<jets.size(); i++){
-      if (jets[i].rap() > 4.5 ) accept_event = false;
+      if (abs(jets[i].rap()) > 4.5 ) accept_event = false;
     }
     // VBF mjj
     if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
