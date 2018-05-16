@@ -4,8 +4,8 @@ import numpy as np
 
 def compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count):
 
-    #print x_devel.shape
-    #print y_devel.shape
+    #print 'x_devel.shape', x_devel.shape
+    #print 'y_devel.shape',y_devel.shape
 
     #print("ggf_size %i " % ggf_size)
     #print("vbf_size %i " % vbf_size)
@@ -14,7 +14,7 @@ def compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_
     tot_xs_vbf = 0
 
     #print x_devel.transpose()[0][10]
-    
+    #print x_devel    
     for event in range(y_devel.shape[1]):
 
         if y_devel.transpose()[event][0] == 1.0:
