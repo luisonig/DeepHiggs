@@ -182,7 +182,7 @@ def make2dplot(ip, observables, data, ggf_size, tot_size):
                   "zstar": "$z^{\star}$",
                   "zstar3j": "$z^{\star}_{3j}$",
                   "Rptjet": "$R_{p_{t,\,j}}$",
-                  "ME": "Matrix element"}
+                  "Weight": "Weight"}
 
     for j in range(0, len(observables)):
         plt.figure(j+1, figsize=(15,10))
@@ -196,9 +196,9 @@ def make2dplot(ip, observables, data, ggf_size, tot_size):
             plt.plot(data[j, ggf_size:tot_size], data[i, ggf_size:tot_size], 'b.', label='VBF', markersize=1)
             plt.xlabel(r""+obs_to_label[observables[j]]+"")
             plt.ylabel(r""+obs_to_label[observables[i]]+"")
-            if observables[j] in ["pth", "ptj1", "ptj2", "mjj", "ME"]:
+            if observables[j] in ["pth", "ptj1", "ptj2", "mjj", "Weight"]:
                 ax.set_xscale("log")
-            if observables[i] in ["pth", "ptj1", "ptj2", "mjj", "ME"]:
+            if observables[i] in ["pth", "ptj1", "ptj2", "mjj", "Weight"]:
                 ax.set_yscale("log")
             plt.title(r"Plot: "+obs_to_label[observables[j]]+" vs. "+obs_to_label[observables[i]])
             plt.legend(loc='best', ncol=1)

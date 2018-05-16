@@ -62,9 +62,9 @@ def main(ip):
 
     if ip.analysis_type == 'obs':
         if ip.makeplots and ip.multip == 2:
-            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yjj","zstar","Rptjet","ME"], x_train, ggf_size, gp._num_examples)
+            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yjj","zstar","Rptjet","Weight"], x_train, ggf_size, gp._num_examples)
         if ip.makeplots and ip.multip == 3:
-            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "ME"], x_train, ggf_size, gp._num_examples)
+            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "Weight"], x_train, ggf_size, gp._num_examples)
     
     x_train_norm = normalize_input(x_train)
     
