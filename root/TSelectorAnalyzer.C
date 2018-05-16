@@ -156,7 +156,7 @@ void TSelectorAnalyzer::ObservablesAnalysis()
   fastjet::JetDefinition jet_definition;
   jet_definition = fastjet::JetDefinition(fastjet::antikt_algorithm, R);  
   fastjet::ClusterSequence cs(jetinput, jet_definition);
-  double jet_ptmin(25.0);
+  double jet_ptmin(30.0);
   PseudoJetVector unsortedjets = cs.inclusive_jets(jet_ptmin);
   PseudoJetVector jets = fastjet::sorted_by_pt(unsortedjets);
 
@@ -170,7 +170,7 @@ void TSelectorAnalyzer::ObservablesAnalysis()
   if (accept_event){
     // rapidity
     for(unsigned i=0; i<jets.size(); i++){
-      if (abs(jets[i].rap()) > 4.5 ) accept_event = false;
+      if (abs(jets[i].rap()) > 4.4 ) accept_event = false;
     }
     // VBF mjj
     if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
@@ -260,7 +260,7 @@ void TSelectorAnalyzer::JetsAnalysis()
   fastjet::JetDefinition jet_definition;
   jet_definition = fastjet::JetDefinition(fastjet::antikt_algorithm, R);  
   fastjet::ClusterSequence cs(jetinput, jet_definition);
-  double jet_ptmin(25.0);
+  double jet_ptmin(30.0);
   PseudoJetVector unsortedjets = cs.inclusive_jets(jet_ptmin);
   PseudoJetVector jets = fastjet::sorted_by_pt(unsortedjets);
 
@@ -274,7 +274,7 @@ void TSelectorAnalyzer::JetsAnalysis()
   if (accept_event){
     // rapidity
     for(unsigned i=0; i<jets.size(); i++){
-      if (abs(jets[i].rap()) > 4.5 ) accept_event = false;
+      if (abs(jets[i].rap()) > 4.4 ) accept_event = false;
     }
     // VBF mjj
     if (m_inv(jets[0],jets[1]) < 400.0 || abs(jets[0].rap()-jets[1].rap()) < 2.8) accept_event = false;
