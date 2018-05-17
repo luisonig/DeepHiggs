@@ -104,13 +104,17 @@ def main(ip):
             else:
                 y_rewrite.append([0.,1.0])
 
-        #makeplot("ptH", pthlist_test, weights_test, ggf_size, y_rewrite)
-        #makeplot("mj1j2", mjjlist_test, weights_test, ggf_size, y_rewrite)
-        #makeplot("ptj1", ptj1list_test, weights_test, ggf_size, y_rewrite)
-        #makeplot("yj1", yj1list_test, weights_test, ggf_size, y_rewrite)
-        #makeplot("dphijj", dphijjlist_test, weights_test, ggf_size, y_rewrite)
+        if ip.makeplots and ip.multip==2:
+            #print x_devel.shape
+           #print 'x_devel.transpose().shape',x_devel.transpose().shape
+            #sys.exit()
+           makeplot(ip,"ptH", x_devel[0], x_devel[-1], ggf_size, y_rewrite, ggf_event_count, vbf_event_count)
+           #makeplot("mj1j2", x_devel.transpose()[3], x_devel.transpose()[-1], ggf_size, y_rewrite)
+           #makeplot("ptj1", x_devel.transpose()[1], x_devel.transpose()[-1], ggf_size, y_rewrite)
+           #makeplot("yj1", x_devel.transpose()[5], x_devel.transpose()[-1], ggf_size, y_rewrite)
+           #makeplot("dphijj", x_devel.transpose()[4], x_devel.transpose()[-1], ggf_size, y_rewrite)
 
-    cut_probability(x_devel,y_final,y_devel, ggf_event_count, vbf_event_count)
+    #cut_probability(x_devel,y_final,y_devel, ggf_event_count, vbf_event_count)
 
     print "Run time: %d seconds" % (time.time() - start_time)
 

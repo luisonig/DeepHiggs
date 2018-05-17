@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib  import rc
 
-def makeplot(title, x, weights, ggf_size, y):
+def makeplot(ip,title, x, weights, ggf_size, y, ggf_event_count, vbf_event_count):
     tot_size=len(y)
     #P.figure()
 
@@ -41,116 +41,116 @@ def makeplot(title, x, weights, ggf_size, y):
         my_bins=my_bins_dphi
         lowlimit=0.0
         uplimit=3.1415
-    #weights_ggf=[w / float(ggf_size) for w in weights[0:ggf_size]]
-    #weights_ggf=np.ones(ggf_size)
-    #n_ggf, bins, patches = ax1.hist( x_ggf, bins=my_bins, weights=weights_ggf,histtype='bar', alpha=0.5)
-    #print n_ggf
-    #print bins
-    #print x_ggf
-    #print weights[0:ggf_size]
-    #plt.show()
+
     f, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, sharex='col', sharey='row')
     ax1.set_title(title+"_ggf")
     ax1.set_yscale("log")
     ax1.set_xlim(lowlimit,uplimit)
-    ax1.set_ylim(1E0,1E5)
+    #ax1.set_ylim(1E0,1E5)
     x_ggf=x[0:ggf_size]
 
-    weights_ggf=np.ones(ggf_size)
+    #weights_ggf=np.ones(ggf_size)
+    #print 'x', x.shape
+    #print 'x_ggf', x_ggf.shape
+    #print 'weights_ggf', weights_ggf.shape
+    weights_ggf=[w/ggf_event_count for w in weights[0:ggf_size]]
     n_ggf, bins, patches = ax1.hist( x_ggf, bins=my_bins, weights=weights_ggf, histtype='bar', alpha=0.5)
 
-    ax2.set_title(title+"_vbf")
-    ax2.set_yscale("log")
-    ax2.set_xlim(lowlimit,uplimit)
-    ax2.set_ylim(1E0,1E5)
-    x_vbf=x[ggf_size+1:tot_size]
-    vbf_size=tot_size-ggf_size
-    #weights_vbf=[w / float(vbf_size) for w in weights[ggf_size+1:tot_size]]
-    #weights_vbf=np.ones(vbf_size+1)
-    weights_vbf=[w/w for w in weights[ggf_size+1:tot_size]]
-    n_vbf, bins, patches = ax2.hist( x_vbf, bins=my_bins, weights=weights_vbf, histtype='bar', alpha=0.5)
-    #plt.show()
+    #ax2.set_title(title+"_vbf")
+    #ax2.set_yscale("log")
+    #ax2.set_xlim(lowlimit,uplimit)
+    #ax2.set_ylim(1E0,1E5)
+    #x_vbf=x[ggf_size+1:tot_size]
+    #vbf_size=tot_size-ggf_size
+    ##weights_vbf=[w / float(vbf_size) for w in weights[ggf_size+1:tot_size]]
+    ##weights_vbf=np.ones(vbf_size+1)
+    #weights_vbf=[w for w in weights[ggf_size+1:tot_size]]
+    #n_vbf, bins, patches = ax2.hist( x_vbf, bins=my_bins, weights=weights_vbf, histtype='bar', alpha=0.5)
+    ##plt.show()
 
-    xggf_rec=[]
-    weights_ggf_rec=[]
-    xvbf_rec=[]
-    weights_vbf_rec=[]
-    ggf_size_rec=0
-    vbf_size_rec=0
-    for i in range(len(y)):
-        if y[i][0]==1.0:
-            xggf_rec.append(x[i])
-            weights_ggf_rec.append(weights[i])
-            ggf_size_rec+=1
-        else:
-            xvbf_rec.append(x[i])
-            weights_vbf_rec.append(weights[i])
-            vbf_size_rec+=1
+    #xggf_rec=[]
+    #weights_ggf_rec=[]
+    #xvbf_rec=[]
+    #weights_vbf_rec=[]
+    #ggf_size_rec=0
+    #vbf_size_rec=0
+    #for i in range(len(y)):
+        #if y[i][0]==1.0:
+            #xggf_rec.append(x[i])
+            #weights_ggf_rec.append(weights[i])
+            #ggf_size_rec+=1
+        #else:
+            #xvbf_rec.append(x[i])
+            #weights_vbf_rec.append(weights[i])
+            #vbf_size_rec+=1
 
-    ax3.set_title(title+"_ggf_rec")
-    ax3.set_yscale("log")
-    ax3.set_xlim(lowlimit,uplimit)
-    ax3.set_ylim(1E0,1E5)
-    #weights_ggf_rec_norm=[w/float(ggf_size_rec) for w in weights_ggf_rec]
-    weights_ggf_rec_norm=np.ones(ggf_size_rec)
-    n_ggf_rec, bins, patches = ax3.hist( xggf_rec, bins=my_bins, weights=weights_ggf_rec_norm, histtype='bar', alpha=0.5)
-    #plt.show()
+    #ax3.set_title(title+"_ggf_rec")
+    #ax3.set_yscale("log")
+    #ax3.set_xlim(lowlimit,uplimit)
+    #ax3.set_ylim(1E0,1E5)
+    ##weights_ggf_rec_norm=[w/float(ggf_size_rec) for w in weights_ggf_rec]
+    #weights_ggf_rec_norm=np.ones(ggf_size_rec)
+    #n_ggf_rec, bins, patches = ax3.hist( xggf_rec, bins=my_bins, weights=weights_ggf_rec_norm, histtype='bar', alpha=0.5)
+    ##plt.show()
 
-    ax4.set_title(title+"_vbf_rec")
-    ax4.set_yscale("log")
-    ax4.set_xlim(lowlimit,uplimit)
-    ax4.set_ylim(1E0,1E5)
-    #weights_vbf_rec_norm=[w/float(vbf_size_rec) for w in weights_vbf_rec]
-    weights_vbf_rec_norm=np.ones(vbf_size_rec)
-    n_vbf_rec, bins, patches = ax4.hist( xvbf_rec, bins=my_bins, weights=weights_vbf_rec_norm, histtype='bar', alpha=0.5)
+    #ax4.set_title(title+"_vbf_rec")
+    #ax4.set_yscale("log")
+    #ax4.set_xlim(lowlimit,uplimit)
+    #ax4.set_ylim(1E0,1E5)
+    ##weights_vbf_rec_norm=[w/float(vbf_size_rec) for w in weights_vbf_rec]
+    #weights_vbf_rec_norm=np.ones(vbf_size_rec)
+    #n_vbf_rec, bins, patches = ax4.hist( xvbf_rec, bins=my_bins, weights=weights_vbf_rec_norm, histtype='bar', alpha=0.5)
 
 
 
-    ratio_ggf=[]
-    ratio_vbf=[]
+    #ratio_ggf=[]
+    #ratio_vbf=[]
+    ##print n_ggf
+    ##print n_ggf_rec
+
+    #for i in range(len(bins)-1):
+        #if n_ggf_rec[i]!=0.0:
+            #ratio_ggf.append(n_ggf[i]/n_ggf_rec[i])
+        #else:
+            #ratio_ggf.append(0.0)
+        #if n_vbf_rec[i]!=0.0:
+            #ratio_vbf.append(n_vbf[i]/n_vbf_rec[i])
+        #else:
+            #ratio_vbf.append(0.0)
+
+
+    #print "n_ggf"
     #print n_ggf
+    print "integral: ", sum(n_ggf)*20.0
+    print "sum ggf_weights", sum(weights_ggf)
+    #print "n_vbf"
+    #print n_vbf
+    #print "n_ggf_rec"
     #print n_ggf_rec
-
-    for i in range(len(bins)-1):
-        if n_ggf_rec[i]!=0.0:
-            ratio_ggf.append(n_ggf[i]/n_ggf_rec[i])
-        else:
-            ratio_ggf.append(0.0)
-        if n_vbf_rec[i]!=0.0:
-            ratio_vbf.append(n_vbf[i]/n_vbf_rec[i])
-        else:
-            ratio_vbf.append(0.0)
-
-
-    print "n_ggf"
-    print n_ggf
-    print "n_vbf"
-    print n_vbf
-    print "n_ggf_rec"
-    print n_ggf_rec
-    print "n_vbf_rec"
-    print n_vbf_rec
-    print "ratio_ggf"
-    print ratio_ggf
-    print "ratio_vbf"
-    print ratio_vbf
+    #print "n_vbf_rec"
+    #print n_vbf_rec
+    #print "ratio_ggf"
     #print ratio_ggf
+    #print "ratio_vbf"
     #print ratio_vbf
-    ax5.set_title("ratio_ggf")
-    ax5.set_xlim(lowlimit,uplimit)
-    ax5.set_ylim(0.0,2.0)
-    #n_ggf_ratio, bins, patches = ax5.hist(ratio_ggf, bins=my_bins, histtype='step')
-    #print my_bins[:-1]
-    #print ratio_ggf
-    ax5.plot(my_bins[:-1], ratio_ggf)
+    ##print ratio_ggf
+    ##print ratio_vbf
+    #ax5.set_title("ratio_ggf")
+    #ax5.set_xlim(lowlimit,uplimit)
+    #ax5.set_ylim(0.0,2.0)
+    ##n_ggf_ratio, bins, patches = ax5.hist(ratio_ggf, bins=my_bins, histtype='step')
+    ##print my_bins[:-1]
+    ##print ratio_ggf
+    #ax5.plot(my_bins[:-1], ratio_ggf)
 
-    ax6.set_title("ratio_vbf")
-    #ax6.set_xlim(0.0,1000.0)
-    ax6.set_ylim(0.0,2.0)
-    #n_vbf_ratio, bins, patches = ax6.hist(ratio_vbf, bins=my_bins, histtype='step')
-    ax6.plot(my_bins[:-1], ratio_vbf)
+    #ax6.set_title("ratio_vbf")
+    ##ax6.set_xlim(0.0,1000.0)
+    #ax6.set_ylim(0.0,2.0)
+    ##n_vbf_ratio, bins, patches = ax6.hist(ratio_vbf, bins=my_bins, histtype='step')
+    #ax6.plot(my_bins[:-1], ratio_vbf)
 
-    plt.show()
+    plt.savefig('figures/Figure_'+str(ip.multip)+'_'+str(title)+'.png')
+    #plt.show()
 
 def make2dplot(ip, observables, data, ggf_size, tot_size):
     """
