@@ -110,7 +110,7 @@ def main(ip):
         #makeplot("yj1", yj1list_test, weights_test, ggf_size, y_rewrite)
         #makeplot("dphijj", dphijjlist_test, weights_test, ggf_size, y_rewrite)
 
-    cut_probability(x_devel,y_final,y_devel, ggf_event_count, vbf_event_count)
+    #cut_probability(x_devel,y_final,y_devel, ggf_event_count, vbf_event_count)
 
     print "Run time: %d seconds" % (time.time() - start_time)
 
