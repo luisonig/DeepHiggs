@@ -88,7 +88,7 @@ def cut_probability(x_test,y,y_,ggf_event_count,vbf_event_count):
     print "Number of reconstructed VBF events ", nr_vbf_rec
     print ""    
     
-    plotfile=open('prob_lots.csv','w')
+    plotfile=open('prob_plots.csv','w')
     plotfile.write('prob,n_events,nr_tot_new,nr_ggf,nr_vbf,xs_ggf,xs_vbf,sb,ssqrtb,accuracy\n')
     
     prob_range = [0.0,0.25,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,0.99]
