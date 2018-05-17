@@ -78,9 +78,9 @@ class RootData:
             x_vec -- numpy-array of shape (n_x, m) with input vectors: 
              m  : number of examples loaded from ntuples (which depends on the applied analysis cuts) 
             n_x : input dimension (for H+2j n_x = 11, H+3j n_x = 13)
-            y_vec -- numpy-array of shape (2, m) with output vectors
+            y_vec -- numpy-array of shape (1, m) with output vectors
              m  : number of examples loaded from ntuples (which depends on the applied analysis cuts)
-             -> output is a 2-dim one-hot vector (1 0) =: ggf , (0 1) =: vbf
+             -> output is a 1-dim vector 0 =: ggf , 1 =: vbf
         """
 
         # Define reader selector:
@@ -138,9 +138,9 @@ class RootData:
         gp._num_examples = tot_size
             
         for i in range(ggf_size):
-            prc_type.append([1.,0.])
+            prc_type.append([0.])
         for i in range(vbf_size):
-            prc_type.append([0.,1.])
+            prc_type.append([1.])
 
         for i in range(tot_size):
                 
