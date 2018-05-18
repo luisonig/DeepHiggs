@@ -6,8 +6,8 @@ root/*_C.so
 # Ntuplefiles
 EDNTuplesFiles
 
-# Temporary Tensorflow files
-tmp/*
+# Tensorflow log files
+log/*
 
 # python compiled files
 *.pyc
