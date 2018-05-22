@@ -18,9 +18,11 @@ def compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_
     for event in range(y_devel.shape[1]):
 
         if y_devel.transpose()[event][0] == 1.0:
+            #print 'ggf', x_devel.transpose()[event][-1]
             # this is a ggf event
             tot_xs_ggf += x_devel.transpose()[event][-1]
         else:
+            #print 'vbf', x_devel.transpose()[event][-1]
             # this is a vbf event
             tot_xs_vbf += x_devel.transpose()[event][-1]
 

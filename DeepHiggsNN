@@ -60,11 +60,11 @@ def main(ip):
     print(" Size of ggf training sample: %i events" % ggf_size)
     print(" Size of vbf training sample: %i events" % vbf_size)
 
-    if ip.analysis_type == 'obs':
-        if ip.makeplots and ip.multip == 2:
-            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yjj","zstar","Rptjet","Weight"], x_train, ggf_size, gp._num_examples)
-        if ip.makeplots and ip.multip == 3:
-            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "Weight"], x_train, ggf_size, gp._num_examples)
+    #if ip.analysis_type == 'obs':
+        #if ip.makeplots and ip.multip == 2:
+            #make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yjj","zstar","Rptjet","Weight"], x_train, ggf_size, gp._num_examples)
+        #if ip.makeplots and ip.multip == 3:
+            #make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "Weight"], x_train, ggf_size, gp._num_examples)
     
     x_train_norm = normalize_input(x_train)
     
@@ -97,7 +97,13 @@ def main(ip):
 
     if ip.analysis_type == 'obs':
         y_rewrite=[]
-        proc_ind = tf.InteractiveSession().run(tf.argmax(y_final, 1))
+        proc_ind = tf.InteractiveSession().run(tf.argmax(y_final.transpose(), 1))
+        #print 'proc_ind', proc_ind
+        #print 'y_final', y_final
+        #print 'y_devel',y_devel.transpose()
+        #print y_devel.transpose()[0][0]
+        #print 'xdevel', x_devel[-1]
+        #print len(y_final)
         for i in range(len(proc_ind)):
             if proc_ind[i]==0:
                 y_rewrite.append([1.,0.])
@@ -105,10 +111,17 @@ def main(ip):
                 y_rewrite.append([0.,1.0])
 
         if ip.makeplots and ip.multip==2:
-            #print x_devel.shape
+           #print y_rewrite
+           y_rewrite=np.array(y_rewrite)
+           #print x_devel.shape
+           #print y_rewrite.shape
            #print 'x_devel.transpose().shape',x_devel.transpose().shape
-            #sys.exit()
-           makeplot(ip,"ptH", x_devel[0], x_devel[-1], ggf_size, y_rewrite, ggf_event_count, vbf_event_count)
+           #sys.exit()
+           makeplot(ip,"p_{T,H}", x_devel[0], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
+           makeplot(ip,"m_{j_1,j_2}", x_devel[3], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
+           makeplot(ip,"p_{T,j_1}", x_devel[1], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
+           makeplot(ip,"y_{j_1}", x_devel[5], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
+           makeplot(ip,"d \phi_{j_1,j_2}", x_devel[4], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
            #makeplot("mj1j2", x_devel.transpose()[3], x_devel.transpose()[-1], ggf_size, y_rewrite)
            #makeplot("ptj1", x_devel.transpose()[1], x_devel.transpose()[-1], ggf_size, y_rewrite)
            #makeplot("yj1", x_devel.transpose()[5], x_devel.transpose()[-1], ggf_size, y_rewrite)
