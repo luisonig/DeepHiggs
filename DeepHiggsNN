@@ -126,8 +126,16 @@ def main(ip):
            #makeplot("ptj1", x_devel.transpose()[1], x_devel.transpose()[-1], ggf_size, y_rewrite)
            #makeplot("yj1", x_devel.transpose()[5], x_devel.transpose()[-1], ggf_size, y_rewrite)
            #makeplot("dphijj", x_devel.transpose()[4], x_devel.transpose()[-1], ggf_size, y_rewrite)
+           
+        if ip.makeplots and ip.multip==3:
+           y_rewrite=np.array(y_rewrite)
+           makeplot(ip,"p_{T,H}", x_devel[0], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
+           makeplot(ip,"m_{j_1,j_2}", x_devel[3], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
+           makeplot(ip,"p_{T,j_1}", x_devel[1], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
+           makeplot(ip,"y_{j_1}", x_devel[5], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
+           makeplot(ip,"d \phi_{j_1,j_2}", x_devel[4], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)           
 
-    #cut_probability(x_devel,y_final,y_devel, ggf_event_count, vbf_event_count)
+    cut_probability(x_devel,y_final,y_devel, ggf_event_count, vbf_event_count)
 
     print "Run time: %d seconds" % (time.time() - start_time)
 
