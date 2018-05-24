@@ -150,13 +150,23 @@ def train_obs_new(ip, x_train, y_train, x_test, y_test):
 
     # Number of training examples 
     m = x_train.shape[1]                 # m: number of examples in the train set
+    unique, counts = np.unique(y_train, return_counts=True)
+    m_vbf_train = counts[1]              # m_vbf_train: number of VBF examples in the train set
     
+    # find number of VBF events in test sample
+    unique, counts = np.unique(y_test, return_counts=True)
+    m_vbf_devel = counts[1]               # m_vbf_test: number of VBF examples in the test set
+
     # Input/output layer dimensions
     n_x = x_train.shape[0]
     n_y = y_train.shape[0]
     costs = []                           # To keep track of the cost
     accur_train = []                     # To keep track of the train accuracy
     accur_devel = []                     # To keep track of the devel accuracy
+    prec_train = []                      # To keep track of the train precision
+    prec_devel = []                      # To keep track of the devel precision
+    rec_train  = []                      # To keep track of the train recall
+    rec_devel  = []                      # To keep track of the devel recall
     
     #--> set random seed: only for testing purposes - TO BE REMOVED
     tf.set_random_seed(1)
@@ -252,11 +262,21 @@ def train_obs_new(ip, x_train, y_train, x_test, y_test):
                 if ip.print_info == True and epoch % 100 == 0:
                     print ("Cost after epoch %i: %f" % (epoch, epoch_cost))
                 if ip.print_info == True and epoch % 10 == 0:
+                    cm_train = confmatrix.eval({x: x_train, y_: y_train, keep_prob: 1.0})
+                    cm_devel = confmatrix.eval({x: x_test, y_: y_test, keep_prob: 1.0})
                     ac_train = accuracy.eval({x: x_train, y_: y_train, keep_prob: 1.0})
                     ac_devel = accuracy.eval({x: x_test, y_: y_test, keep_prob: 1.0})
+                    precision_train = (cm_train[1,0] + cm_train[1,1])/float(m_vbf_train)
+                    precision_devel = (cm_devel[1,0] + cm_devel[1,1])/float(m_vbf_devel)
+                    recall_train = (cm_train[1,1])/float(m_vbf_train)
+                    recall_devel = (cm_devel[1,1])/float(m_vbf_devel)
                     costs.append(epoch_cost)
                     accur_train.append(ac_train)
                     accur_devel.append(ac_devel)
+                    prec_train.append(precision_train)
+                    prec_devel.append(precision_devel)
+                    rec_train.append(recall_train)
+                    rec_devel.append(recall_devel)
                     
 
             ## Save model
@@ -268,8 +288,17 @@ def train_obs_new(ip, x_train, y_train, x_test, y_test):
             ac_train = accuracy.eval({x: x_train, y_: y_train, keep_prob: 1.0})
             ac_devel = accuracy.eval({x: x_test, y_: y_test, keep_prob: 1.0})
             yprob    = y_prob.eval({x: x_test, y_: y_test, keep_prob: 1.0})
+            precision_train = (cm_train[1,0] + cm_train[1,1])/float(m_vbf_train)
+            precision_devel = (cm_devel[1,0] + cm_devel[1,1])/float(m_vbf_devel)
+            recall_train = (cm_train[1,1])/float(m_vbf_train)
+            recall_devel = (cm_devel[1,1])/float(m_vbf_devel)
+            costs.append(epoch_cost)
             accur_train.append(ac_train)
             accur_devel.append(ac_devel)
+            prec_train.append(precision_train)
+            prec_devel.append(precision_devel)
+            rec_train.append(recall_train)
+            rec_devel.append(recall_devel)
             
             if ip.print_info == True:
                 ## Plot the cost
@@ -288,14 +317,24 @@ def train_obs_new(ip, x_train, y_train, x_test, y_test):
                 plt.xlabel('iterations (x10)')                
                 plt.title("Learning rate =" + str(ip.learning_rate))
                 plt.tight_layout()
-                plt.savefig(ip.log_dir + '/'+ip.runname+'.png')
+                plt.savefig(ip.log_dir + '/'+ip.runname+'_accuracy.png')
                 #plt.show()                
-        
+            
             print("Train Accuracy:", ac_train)
             print("Test Accuracy:", ac_devel)
             print("Conf. matrix: T neg.= " + str(cm_devel[0,0]) + ", F neg.= " + str(cm_devel[0,1])
                             + ", F pos.= " + str(cm_devel[1,0]) + ", T pos.= " + str(cm_devel[1,1]))
 
+            plotfile=open('training_plots.csv','w')
+            plotfile.write('epoch, cost, accuracy_train, accuracy_devel, prec_train, prec_devel, recall_train, recall_devel\n')
+            for i in range(len(costs)):
+                plotfile.write(str(i*10)+ ", " + str(costs[i])
+                               + ", " + str(accur_train[i]) + ", " + str(accur_devel[i])
+                               + ", " + str(prec_train[i])  + ", " + str(prec_devel[i])
+                               + ", " + str(rec_train[i])   + ", " + str(rec_devel[i]) + "\n")
+            plotfile.close()
+            
+            
         elif ip.mode == "eval":
             saver.restore(sess, ip.log_dir + '/models/'+ip.runname)
             
