@@ -6,6 +6,12 @@ root/*_C.so
 # Ntuplefiles
 EDNTuplesFiles
 
+# Tensorflow log files
+log/*
+
+# Jupyter notebook stuff
+util/.ipynb_checkpoints
+
 # python compiled files
 *.pyc
 src/*.pyc

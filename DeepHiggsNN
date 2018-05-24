@@ -38,16 +38,11 @@ def main(ip):
     # Initialize can compile in ROOT:
     data = RootData(ip.multip, 1)
 
-    # We want to handle Ctrl+C
-    #sh = ROOT.TSignalHandler(ROOT.kSigInterrupt, False)
-    #sh.Add()
-    #sh.Connect("Notified()", "TROOT", ROOT.gROOT, "SetInterrupt()")
-
     #if ip.mode == 'training':
     gp=GlobalParameters()
-    
+
     print "--> Load training data ..."
-    
+
     if ip.analysis_type == 'obs':
         x_train, y_train, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_obs(ip, gp, 'train')
 
@@ -60,14 +55,12 @@ def main(ip):
     print(" Size of ggf training sample: %i events" % ggf_size)
     print(" Size of vbf training sample: %i events" % vbf_size)
 
-    #if ip.analysis_type == 'obs':
-        #if ip.makeplots and ip.multip == 2:
-            #make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yjj","zstar","Rptjet","Weight"], x_train, ggf_size, gp._num_examples)
-        #if ip.makeplots and ip.multip == 3:
-            #make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "Weight"], x_train, ggf_size, gp._num_examples)
-    
-    x_train_norm = normalize_input(x_train)
-    
+    if ip.analysis_type == 'obs':
+        if ip.makeplots and ip.multip == 2:
+            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yjj","zstar","Rptjet","Weight"], x_train, ggf_size, gp._num_examples)
+        if ip.makeplots and ip.multip == 3:
+            make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "Weight"], x_train, ggf_size, gp._num_examples)
+
     print "--> Load development data ..."
 
     if ip.analysis_type == 'obs':
@@ -81,34 +74,26 @@ def main(ip):
     print(" Size of ggf event sample: %i events" % ggf_event_count)
     print(" Size of vbf event sample: %i events" % vbf_event_count)
 
-    x_devel_norm = normalize_input(x_devel)
-
     #---[ test XS:
     # Trial analysis:
     compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count)
     #sys.exit(0)
     #---] test XS
-    
+
     if ip.analysis_type == 'obs':
-        y_final=train_obs(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
+        y_final = train_obs_new(ip, x_train, y_train, x_devel, y_devel)
     elif ip.analysis_type == 'jets':
-        y_final=train_jet(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
+        y_final = train_jet(gp, ip, x_train, y_train, x_devel, y_devel)
 
 
     if ip.analysis_type == 'obs':
         y_rewrite=[]
-        proc_ind = tf.InteractiveSession().run(tf.argmax(y_final.transpose(), 1))
-        #print 'proc_ind', proc_ind
-        #print 'y_final', y_final
-        #print 'y_devel',y_devel.transpose()
-        #print y_devel.transpose()[0][0]
-        #print 'xdevel', x_devel[-1]
-        #print len(y_final)
+        proc_ind = tf.InteractiveSession().run((tf.round(y_final[:][0])))
         for i in range(len(proc_ind)):
             if proc_ind[i]==0:
-                y_rewrite.append([1.,0.])
+                y_rewrite.append([0.])
             else:
-                y_rewrite.append([0.,1.0])
+                y_rewrite.append([1.])
 
         if ip.makeplots and ip.multip==2:
            #print y_rewrite
@@ -135,12 +120,11 @@ def main(ip):
            makeplot(ip,"y_{j_1}", x_devel[5], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
            makeplot(ip,"d \phi_{j_1,j_2}", x_devel[4], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)           
 
-    cut_probability(x_devel,y_final,y_devel, ggf_event_count, vbf_event_count)
+        cut_probability(x_devel,y_final,y_devel, ggf_event_count, vbf_event_count)
 
     print "Run time: %d seconds" % (time.time() - start_time)
 
     sys.exit()
-    
 
 class InputParameters:
 
@@ -158,6 +142,8 @@ class InputParameters:
                             help="Number of events to be processed [all]")
         parser.add_argument("--debug",  dest="DEBUG", default=False, action='store_const', const=True,
                             help="Generate debug output [False]")
+        parser.add_argument('--mode',  dest="MODE", default="train",
+                            help="If set to 'train' the NN is trained and the result is stored in the 'log' folder, if set to 'eval' a trained NN is restored. The name in 'run_dir' needs to agree with a previously stored run.")
         parser.add_argument("-ggf_train", "--ggf_train", dest="GGFFILE_TRAIN", required=True,
                             help="Root Ntuple for training GGF")
         parser.add_argument("-vbf_train", "--vbf_train", dest="VBFFILE_TRAIN", required=True,
@@ -182,11 +168,12 @@ class InputParameters:
                             help='Whether to generate observables scatter plots')
         parser.add_argument('--analysis_type',  dest="analysis_type", default="obs",
                             help="If set to 'obs', high-level observables are used as input variables, if set to 'jets', the four-momenta of the jets are used as input variables")
-    
+
         args                 = parser.parse_args()
         self.multip          = int(args.MULTIP)
         self.events          = args.EVENTS
         self.debug           = args.DEBUG
+        self.mode            = args.MODE
         self.GGFFILE_TRAIN   = args.GGFFILE_TRAIN
         self.VBFFILE_TRAIN   = args.VBFFILE_TRAIN
         self.GGFFILE_EVAL    = args.GGFFILE_EVAL
@@ -200,6 +187,13 @@ class InputParameters:
         self.makeplots       = args.makeplots
         self.analysis_type   = args.analysis_type
 
+        # parameters set to default
+        self.minibatch_size = 128
+        self.num_epochs     = self.max_steps
+        self.print_info     = True
+        self.xentropy_w     = 1.0
+        self.runname        = self.run_dir
+        
         try:
             value = int(self.multip)
         except ValueError:
