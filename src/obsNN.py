@@ -208,7 +208,7 @@ def train_obs_new(ip, x_train, y_train, x_test, y_test):
         with tf.name_scope('accuracy'):
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         with tf.name_scope('confmatrix'):
-            confmatrix = tf.confusion_matrix(tf.squeeze(tf.cast(y_prob, tf.int32)), tf.squeeze(tf.cast(y_, tf.int32)), num_classes=2)
+            confmatrix = tf.confusion_matrix(tf.squeeze(tf.cast(tf.round(y_prob), tf.int32)), tf.squeeze(tf.cast(y_, tf.int32)), num_classes=2)
     tf.summary.scalar('accuracy', accuracy)
 
     # Initialize all the variables
