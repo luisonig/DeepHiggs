@@ -60,7 +60,7 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
     weights_vbf=[]
     #print "HIER", len(y),y.shape
     for event in range(len(y)):
-        if y[event][0]==1.0:
+        if y[event][0] == 0.0:
             #print 'ggf', weights[event]
             x_ggf.append(x[event])
             weights_ggf.append(weights[event]/ggf_event_count)
@@ -89,7 +89,7 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
     ggf_size_rec=0
     vbf_size_rec=0
     for i in range(len(y_NN)):
-        if y_NN[i][0]==1.0:
+        if y_NN[i][0] == 0.0:
             xggf_rec.append(x[i])
             weights_ggf_rec.append(weights[i]/ggf_event_count)
             ggf_size_rec+=1
