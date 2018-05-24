@@ -137,6 +137,8 @@ class RootData:
 
         gp._num_examples = tot_size
 
+        E_beam = 6500
+        
         for i in range(ggf_size):
             prc_type.append([0.])
         for i in range(vbf_size):
@@ -145,10 +147,10 @@ class RootData:
         for i in range(tot_size):
 
             if ip.multip == 2:
-                obs_list.append([AnalyzerSelector.pth[i],
-                                 AnalyzerSelector.ptj1[i],
-                                 AnalyzerSelector.ptj2[i],
-                                 AnalyzerSelector.mjj[i],
+                obs_list.append([AnalyzerSelector.pth[i]/E_beam,
+                                 AnalyzerSelector.ptj1[i]/E_beam,
+                                 AnalyzerSelector.ptj2[i]/E_beam,
+                                 AnalyzerSelector.mjj[i]/E_beam,
                                  AnalyzerSelector.dphijj[i],
                                  AnalyzerSelector.yj1[i],
                                  AnalyzerSelector.yj2[i],
@@ -158,10 +160,10 @@ class RootData:
                                  AnalyzerSelector.weight[i]])
 
             if ip.multip == 3:
-                obs_list.append([AnalyzerSelector.pth[i],
-                                 AnalyzerSelector.ptj1[i],
-                                 AnalyzerSelector.ptj2[i],
-                                 AnalyzerSelector.mjj[i],
+                obs_list.append([AnalyzerSelector.pth[i]/E_beam,
+                                 AnalyzerSelector.ptj1[i]/E_beam,
+                                 AnalyzerSelector.ptj2[i]/E_beam,
+                                 AnalyzerSelector.mjj[i]/E_beam,
                                  AnalyzerSelector.dphijj[i],
                                  AnalyzerSelector.yj1[i],
                                  AnalyzerSelector.yj2[i],
@@ -279,7 +281,7 @@ class RootData:
                 if j%4 == 0:
                     Etot += AnalyzerSelector.jetsvector[j]
 
-                mom_list.append(AnalyzerSelector.jetsvector[j])
+                mom_list.append(AnalyzerSelector.jetsvector[j]/E_beam)
 
             # Append at the end weight of the event
             mom_list.append(AnalyzerSelector.weight[i])

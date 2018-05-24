@@ -38,11 +38,6 @@ def main(ip):
     # Initialize can compile in ROOT:
     data = RootData(ip.multip, 1)
 
-    # We want to handle Ctrl+C
-    #sh = ROOT.TSignalHandler(ROOT.kSigInterrupt, False)
-    #sh.Add()
-    #sh.Connect("Notified()", "TROOT", ROOT.gROOT, "SetInterrupt()")
-
     #if ip.mode == 'training':
     gp=GlobalParameters()
 
@@ -66,8 +61,6 @@ def main(ip):
         if ip.makeplots and ip.multip == 3:
             make2dplot(ip, ["pth","ptj1","ptj2","mjj","dphijj","yj1","yj2","yj3","yjj","zstar","Rptjet", "zstar3j", "Weight"], x_train, ggf_size, gp._num_examples)
 
-    x_train_norm = normalize_input(x_train)
-
     print "--> Load development data ..."
 
     if ip.analysis_type == 'obs':
@@ -81,8 +74,6 @@ def main(ip):
     print(" Size of ggf event sample: %i events" % ggf_event_count)
     print(" Size of vbf event sample: %i events" % vbf_event_count)
 
-    x_devel_norm = normalize_input(x_devel)
-
     #---[ test XS:
     # Trial analysis:
     compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count)
@@ -90,9 +81,9 @@ def main(ip):
     #---] test XS
 
     if ip.analysis_type == 'obs':
-        y_final = train_obs(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
+        y_final = train_obs_new(ip, x_train, y_train, x_devel, y_devel)
     elif ip.analysis_type == 'jets':
-        y_final = train_jet(gp, ip, x_train_norm, y_train, x_devel_norm, y_devel)
+        y_final = train_jet(gp, ip, x_train, y_train, x_devel, y_devel)
 
 
     if ip.analysis_type == 'obs':
@@ -133,6 +124,8 @@ class InputParameters:
                             help="Number of events to be processed [all]")
         parser.add_argument("--debug",  dest="DEBUG", default=False, action='store_const', const=True,
                             help="Generate debug output [False]")
+        parser.add_argument('--mode',  dest="MODE", default="train",
+                            help="If set to 'train' the NN is trained and the result is stored in the 'log' folder, if set to 'eval' a trained NN is restored. The name in 'run_dir' needs to agree with a previously stored run.")
         parser.add_argument("-ggf_train", "--ggf_train", dest="GGFFILE_TRAIN", required=True,
                             help="Root Ntuple for training GGF")
         parser.add_argument("-vbf_train", "--vbf_train", dest="VBFFILE_TRAIN", required=True,
@@ -162,6 +155,7 @@ class InputParameters:
         self.multip          = int(args.MULTIP)
         self.events          = args.EVENTS
         self.debug           = args.DEBUG
+        self.mode            = args.MODE
         self.GGFFILE_TRAIN   = args.GGFFILE_TRAIN
         self.VBFFILE_TRAIN   = args.VBFFILE_TRAIN
         self.GGFFILE_EVAL    = args.GGFFILE_EVAL
@@ -175,6 +169,13 @@ class InputParameters:
         self.makeplots       = args.makeplots
         self.analysis_type   = args.analysis_type
 
+        # parameters set to default
+        self.minibatch_size = 128
+        self.num_epochs     = self.max_steps
+        self.print_info     = True
+        self.xentropy_w     = 1.0
+        self.runname        = self.run_dir
+        
         try:
             value = int(self.multip)
         except ValueError:
