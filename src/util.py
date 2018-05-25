@@ -208,7 +208,7 @@ def nn_layer(input_tensor, output_dim, input_dim, layer_name, act=tf.nn.relu):
             tf.summary.histogram('pre_activations', preactivate)
         activations = act(preactivate, name='activation')
         tf.summary.histogram('activations', activations)
-        return activations
+        return activations, weights
 
 def nn_final_layer(input_tensor, output_dim, input_dim, layer_name):
     """

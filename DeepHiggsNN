@@ -192,7 +192,9 @@ class InputParameters:
         self.num_epochs     = self.max_steps
         self.print_info     = True
         self.xentropy_w     = 1.0
+        self.lambdal2       = 0.0
         self.runname        = self.run_dir
+
         
         try:
             value = int(self.multip)
