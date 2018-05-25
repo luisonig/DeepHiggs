@@ -34,10 +34,10 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
         y_ = tf.placeholder(tf.float32, [n_y, None], name='y-input')
 
     # First FC hidden layer with 200 units
-    hidden1 = nn_layer(x, 200, n_x, 'layer1')
+    hidden1, _ = nn_layer(x, 200, n_x, 'layer1')
 
     # Second FC hidden layer with 50 units
-    hidden2 = nn_layer(hidden1, 50, 200, 'layer2')
+    hidden2, _ = nn_layer(hidden1, 50, 200, 'layer2')
 
     # Dropout layer
     with tf.name_scope('dropout'):
@@ -46,7 +46,7 @@ def train_obs(gp, ip, x_train, y_train, x_test, y_test):
         dropped = tf.nn.dropout(hidden2, keep_prob)
 
     # Do not apply softmax activation yet, see below.
-    y = nn_layer(dropped, n_y, 50, 'layer3', act=tf.identity)
+    y, _ = nn_layer(dropped, n_y, 50, 'layer3', act=tf.identity)
     #y = nn_final_layer(dropped, n_y, 50, 'layer3')
 
     with tf.name_scope('cross_entropy'):

@@ -129,7 +129,7 @@ class RootData:
             chain.Process(TReader, "", chain.GetMaxEntryLoop(), 0)
         else:
             chain.Process(TReader, "", int(ip.events), 0)
-            
+
         tot_size = int(AnalyzerSelector.event_binned)
         tot_event_count = int(AnalyzerSelector.event_count)
         vbf_size = tot_size - ggf_size
@@ -138,7 +138,7 @@ class RootData:
         gp._num_examples = tot_size
 
         E_beam = 6500
-        
+
         for i in range(ggf_size):
             prc_type.append([0.])
         for i in range(vbf_size):
@@ -255,6 +255,8 @@ class RootData:
         vbf_event_count = tot_event_count - ggf_event_count
 
         gp._num_examples = tot_size
+
+        E_beam = 6500
 
         for i in range(ggf_size):
             prc_type.append([0.])

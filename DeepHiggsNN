@@ -83,7 +83,7 @@ def main(ip):
     if ip.analysis_type == 'obs':
         y_final = train_obs_new(ip, x_train, y_train, x_devel, y_devel)
     elif ip.analysis_type == 'jets':
-        y_final = train_jet(gp, ip, x_train, y_train, x_devel, y_devel)
+        y_final = train_jet_new(ip, x_train, y_train, x_devel, y_devel)
 
 
     if ip.analysis_type == 'obs':
