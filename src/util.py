@@ -3,6 +3,7 @@
 import numpy as np
 import tensorflow as tf
 from src.analysis import *
+from src.plots import *
 import math
 
 
@@ -53,7 +54,7 @@ def normalize_input(x_vec):
 
     return x_vec_norm
 
-def cut_probability(x_test, y, y_, ggf_event_count, vbf_event_count):
+def cut_probability(ip,x_test, y, y_, y_rewrite,ggf_event_count, vbf_event_count):
     """
     Loops over a range of probabilities where events are only accepted if the level of
     confidence of the NN that the event is a signal is large than a given threshold
@@ -97,6 +98,7 @@ def cut_probability(x_test, y, y_, ggf_event_count, vbf_event_count):
         x_new=[]
         y_new=[]
         yuscore_new=[]
+        y_rewrite_new=[]
         n_events_new=0
         for i in range(n_events):
             #if y[0][i] >prob or y[1][i] >prob:
@@ -105,9 +107,11 @@ def cut_probability(x_test, y, y_, ggf_event_count, vbf_event_count):
                 n_events_new +=1
                 y_new.append(y.transpose()[i])
                 yuscore_new.append(y_.transpose()[i])
+                y_rewrite_new.append([y_rewrite[i][0]])
         yuscore_new=np.array(yuscore_new)
         y_new=np.array(y_new)
         x_new=np.array(x_new)
+        y_rewrite_new=np.array(y_rewrite_new)
         nr_ggf_new=0
         nr_vbf_new=0
         nr_ggf_rec_new=0
@@ -154,6 +158,11 @@ def cut_probability(x_test, y, y_, ggf_event_count, vbf_event_count):
         plotfile.write(str(prob)+','+str(n_events)+','+str(n_events_new)+','+str(nr_ggf_new)
                        +','+str(nr_vbf_new)+','+str(xs_ggf)+','+str(xs_vbf)+','+str(sb)
                        +','+str(ssqrtb)+','+str(accuracy)+'\n')
+        
+        if ip.makeplots and prob==0.8:
+            makeplot(ip,"p_{T,H}\; 0.8", x_new.transpose()[0]*6500.0, x_new.transpose()[-1], nr_ggf_new, yuscore_new,y_rewrite_new, ggf_event_count, vbf_event_count)
+            makeplot(ip,"d \phi_{j_1,j_2}\; 0.8", x_new.transpose()[4], x_new.transpose()[-1], nr_ggf_new, yuscore_new,y_rewrite_new, ggf_event_count, vbf_event_count)            
+            
 
     plotfile.close()
 

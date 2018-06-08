@@ -110,7 +110,7 @@ class RootData:
         if ip.events < 0:
             chain.Process(TReader, "", chain.GetMaxEntryLoop(), 0)
         else:
-            chain.Process(TReader, "", 9*int(ip.events), 0)
+            chain.Process(TReader, "", 4*int(ip.events), 0)
 
         ggf_size = int(AnalyzerSelector.event_binned)
         ggf_event_count = int(AnalyzerSelector.event_count)
@@ -145,6 +145,10 @@ class RootData:
             prc_type.append([1.])
 
         for i in range(tot_size):
+            if i <=ggf_size:
+                norm=ggf_event_count
+            else:
+                norm=vbf_event_count
 
             if ip.multip == 2:
                 obs_list.append([AnalyzerSelector.pth[i]/E_beam,
@@ -157,7 +161,7 @@ class RootData:
                                  AnalyzerSelector.yjj[i],
                                  AnalyzerSelector.zstar[i],
                                  AnalyzerSelector.Rptjet[i],
-                                 AnalyzerSelector.weight[i]])
+                                 AnalyzerSelector.weight[i]/norm])
 
             if ip.multip == 3:
                 obs_list.append([AnalyzerSelector.pth[i]/E_beam,
@@ -172,7 +176,7 @@ class RootData:
                                  AnalyzerSelector.zstar[i],
                                  AnalyzerSelector.Rptjet[i],
                                  AnalyzerSelector.zstarj3[i],
-                                 AnalyzerSelector.weight[i]])
+                                 AnalyzerSelector.weight[i]/norm])
 
         # So far all ggf data are first and all vbf data are after
         # Reshuffle data such that ggf and vbf events appear alternating:
@@ -229,7 +233,7 @@ class RootData:
         if ip.events < 0:
             chain.Process(TReader, "", chain.GetMaxEntryLoop(), 0)
         else:
-            chain.Process(TReader, "", 9*int(ip.events), 0)
+            chain.Process(TReader, "", 4*int(ip.events), 0)
 
         ggf_size = int(AnalyzerSelector.event_binned)
         ggf_event_count = int(AnalyzerSelector.event_count)
@@ -266,6 +270,11 @@ class RootData:
         p_per_event = 4*(ip.multip+1)
 
         for i in range(tot_size):
+            
+            if i <=ggf_size:
+                norm=ggf_event_count
+            else:
+                norm=vbf_event_count            
 
             mom_list=[]
 
@@ -286,7 +295,7 @@ class RootData:
                 mom_list.append(AnalyzerSelector.jetsvector[j]/E_beam)
 
             # Append at the end weight of the event
-            mom_list.append(AnalyzerSelector.weight[i])
+            mom_list.append(AnalyzerSelector.weight[i]/norm)
             #mom_list.append(AnalyzerSelector.pth[i])
             #mom_list.append(AnalyzerSelector.ptj1[i])
             #mom_list.append(AnalyzerSelector.ptj2[i])

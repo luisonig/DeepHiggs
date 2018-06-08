@@ -201,7 +201,9 @@ void TSelectorAnalyzer::ObservablesAnalysis()
    mjj.push_back(m_inv(jets[0],jets[1]));  
    
    //returning dphijj
-   dphijj.push_back(abs(jets[0].phi()-jets[1].phi()));
+   double dphi = abs(jets[0].phi()-jets[1].phi());
+   if(dphi > fastjet::pi) { dphi = fastjet::twopi - dphi;}
+   dphijj.push_back(dphi);
    
    //returning weight;
    //me_weight.push_back(orig_me_wgt());

@@ -25,8 +25,8 @@ def compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_
             tot_xs_vbf += x_devel.transpose()[event][-1]
 
 
-    tot_xs_ggf /= ggf_event_count
-    tot_xs_vbf /= vbf_event_count
+#    tot_xs_ggf /= ggf_event_count
+#    tot_xs_vbf /= vbf_event_count
 
     print("GGF XS: %s" % str(tot_xs_ggf))
     print("VBF XS: %s" % str(tot_xs_vbf))

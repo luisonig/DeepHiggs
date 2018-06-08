@@ -23,24 +23,34 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
              460.,480.,500.,520.,540.,560.,580.,600.,620.,640.,660.,680.,700,720.,740.,760.,780.,800.,820.,840.,860.,
              880.,900.,920.,940.,960.,980.]
     my_bins_m=[0.,40.,80.,120.,160.,200.,240.,280.,320.,360.,400.,440.,480.,520.,560.,600.,640.,680.,720.,760.,800.,840.,880.,920.,960.,1000.,1040.,1080.,1120.,1160.,1200.,1240.,1280.,1320.,1360.,1400.,1440.,1480.,1520.,1560.,1600.,1640.,1680.,1720.,1760.,1800.,1840.,1880.,1920.,1960.]
-    my_bins_y=[-4.5,-4.05,-3.6,-3.15,-2.7,-2.25,-1.8,-1.35,-0.9,-0.45,0.,0.45,0.9,1.35,1.8,2.25,2.7,3.15,3.6,4.05]
-    my_bins_dphi=[0.0,0.157,0.314,0.471,0.627,0.785,0.942,1.1,1.257,1.414,1.571,1.728,1.885,2.042,2.199,2.356,2.513,2.67,2.827,2.984]
+    my_bins_y=[-4.5,-4.05,-3.6,-3.15,-2.7,-2.25,-1.8,-1.35,-0.9,-0.45,0.,0.45,0.9,1.35,1.8,2.25,2.7,3.15,3.6,4.05,4.5]
+    my_bins_dphi=[0.0,0.157,0.314,0.471,0.627,0.785,0.942,1.1,1.257,1.414,1.571,1.728,1.885,2.042,2.199,2.356,2.513,2.67,2.827,2.984,3.1415]
     if title.lower().find("p_")>=0:
         my_bins=my_bins_pt
         lowlimit=0.0
         uplimit=1000.0
+        lowlimit_y=1e-7
+        uplimit_y=1e-2
     if title.lower().find("m_")>=0:
        my_bins=my_bins_m
        lowlimit=0.0
        uplimit=2000.0
+       lowlimit_y=1e-7
+       uplimit_y=5e-1       
     if title.lower().find("y_")>=0:
        my_bins=my_bins_y
        lowlimit=-4.5
        uplimit=4.5
+       lowlimit_y=1e-4
+       uplimit_y=1e2       
     if title.lower().find("d ")>=0:
         my_bins=my_bins_dphi
         lowlimit=0.0
         uplimit=3.1415
+        lowlimit_y=1e-5
+        uplimit_y=1e0        
+
+    binwidth=my_bins[1]-my_bins[0]
 
     f, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2)
     plt.subplots_adjust(hspace=0.6, bottom=0.1)
@@ -48,7 +58,7 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
     ax1.set_yscale("log")
     ax1.set_xlim(lowlimit,uplimit)
     f.suptitle("$d\sigma/"+title+"$")
-    #ax1.set_ylim(1E0,1E5)
+    ax1.set_ylim(lowlimit_y,uplimit_y)
     
     #x_ggf=x[0:ggf_size]
     #weights_ggf=np.ones(ggf_size)
@@ -58,22 +68,20 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
     x_vbf=[]
     weights_ggf=[]
     weights_vbf=[]
-    #print "HIER", len(y),y.shape
     for event in range(len(y)):
         if y[event][0] == 0.0:
-            #print 'ggf', weights[event]
             x_ggf.append(x[event])
-            weights_ggf.append(weights[event]/ggf_event_count)
+            weights_ggf.append(weights[event]/binwidth)
         else:
             x_vbf.append(x[event])
-            weights_vbf.append(weights[event]/vbf_event_count)
+            weights_vbf.append(weights[event]/binwidth)
     
     n_ggf, bins, patches = ax1.hist( x_ggf, bins=my_bins, weights=weights_ggf, histtype='bar', alpha=0.5)
 
     ax2.set_title("VBF")
     ax2.set_yscale("log")
     ax2.set_xlim(lowlimit,uplimit)
-    #ax2.set_ylim(1E0,1E5)
+    ax2.set_ylim(lowlimit_y,uplimit_y)
     #x_vbf=x[ggf_size+1:tot_size]
     vbf_size=tot_size-ggf_size
     ##weights_vbf=[w / float(vbf_size) for w in weights[ggf_size+1:tot_size]]
@@ -91,17 +99,17 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
     for i in range(len(y_NN)):
         if y_NN[i][0] == 0.0:
             xggf_rec.append(x[i])
-            weights_ggf_rec.append(weights[i]/ggf_event_count)
+            weights_ggf_rec.append(weights[i]/binwidth)
             ggf_size_rec+=1
         else:
             xvbf_rec.append(x[i])
-            weights_vbf_rec.append(weights[i]/vbf_event_count)
+            weights_vbf_rec.append(weights[i]/binwidth)
             vbf_size_rec+=1
 
     ax3.set_title("GGF REC")
     ax3.set_yscale("log")
     ax3.set_xlim(lowlimit,uplimit)
-    #ax3.set_ylim(1E0,1E5)
+    ax3.set_ylim(lowlimit_y,uplimit_y)
     #weights_ggf_rec_norm=[w/float(ggf_size_rec) for w in weights_ggf_rec]
     #weights_ggf_rec_norm=np.ones(ggf_size_rec)
     n_ggf_rec, bins, patches = ax3.hist( xggf_rec, bins=my_bins, weights=weights_ggf_rec, histtype='bar', alpha=0.5)
@@ -110,10 +118,11 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
     ax4.set_title("VBF REC")
     ax4.set_yscale("log")
     ax4.set_xlim(lowlimit,uplimit)
-    #ax4.set_ylim(1E0,1E5)
+    ax4.set_ylim(lowlimit_y,uplimit_y)
     #weights_vbf_rec_norm=[w/float(vbf_size_rec) for w in weights_vbf_rec]
     #weights_vbf_rec_norm=np.ones(vbf_size_rec)
     n_vbf_rec, bins, patches = ax4.hist( xvbf_rec, bins=my_bins, weights=weights_vbf_rec, histtype='bar', alpha=0.5)
+
 
 
 
@@ -131,20 +140,21 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
             ratio_vbf.append(0.0)
 
 
-    #print "n_ggf"
-    #print n_ggf
-    print "integral ggf: ", sum(n_ggf)
-    #print "sum ggf_weights", sum(weights_ggf)
-    print "integral vbf: ", sum(n_vbf)
-    print "integral ggf rec: ", sum(n_ggf_rec)
-    print "integral vbf rec: ", sum(n_vbf_rec)
-    #print "sum vbf_weights", sum(weights_vbf)
+    print "n_ggf"
+    print n_ggf
+    print "integral ggf: ", sum(n_ggf)*binwidth
+    print "sum ggf_weights", sum(weights_ggf)*binwidth
+    print "integral vbf: ", sum(n_vbf)*binwidth
+    print "sum vbf_weights", sum(weights_vbf)*binwidth    
+    print "sum of all weights", sum(weights)*binwidth
+    print "integral ggf rec: ", sum(n_ggf_rec)*binwidth
+    print "integral vbf rec: ", sum(n_vbf_rec)*binwidth
     #print "n_vbf"
     #print n_vbf
-    #print "n_ggf_rec"
-    #print n_ggf_rec
-    #print "n_vbf_rec"
-    #print n_vbf_rec
+    print "n_ggf_rec"
+    print n_ggf_rec*binwidth
+    print "n_vbf_rec"
+    print n_vbf_rec*binwidth
     #print "ratio_ggf"
     #print ratio_ggf
     #print "ratio_vbf"
@@ -160,7 +170,7 @@ def makeplot(ip,title, x, weights, ggf_size, y, y_NN,ggf_event_count, vbf_event_
     ax5.plot(my_bins[:-1], ratio_ggf)
 
     ax6.set_title("Ratio VBF")
-    ##ax6.set_xlim(0.0,1000.0)
+    ax6.set_xlim(lowlimit,uplimit)
     ax6.set_ylim(0.0,2.0)
     ##n_vbf_ratio, bins, patches = ax6.hist(ratio_vbf, bins=my_bins, histtype='step')
     ax6.plot(my_bins[:-1], ratio_vbf)
