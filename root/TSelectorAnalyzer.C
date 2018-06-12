@@ -350,7 +350,7 @@ void TSelectorAnalyzer::PixelsAnalysis()
     
     mom= sqrt(pow(vec.E(),2)-pow(vec.m(),2));
     theta= acos(vec.pz()/mom);
-    cout<<"theta "<<theta<<" phi "<<phi<<" E "<<vec.E()<<endl;
+    //cout<<"theta "<<theta<<" phi "<<phi<<" E "<<vec.E()<<endl;
     
     pic->Fill(theta,phi,vec.E() );
   }

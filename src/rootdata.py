@@ -271,11 +271,11 @@ class RootData:
         p_per_event = 4*(ip.multip+1)
 
         for i in range(tot_size):
-            
+
             if i <=ggf_size:
                 norm=ggf_event_count
             else:
-                norm=vbf_event_count            
+                norm=vbf_event_count
 
             mom_list=[]
 
@@ -345,12 +345,11 @@ class RootData:
         AnalyzerSelector.multip = ip.multip
         TReader.addSelector(AnalyzerSelector)
         AnalyzerSelector.runmode = 3
-	AnalyzerSelector.nr_theta=40
-	AnalyzerSelector.nr_phi=40
-	
+	AnalyzerSelector.nr_theta = ip.nr_theta
+	AnalyzerSelector.nr_phi = ip.nr_phi
 
         prc_type = []
-        pixel_list = []
+        pic_list = []
 
         # Define chain and add file list:
         chain = ROOT.TChain("t3")
@@ -400,33 +399,27 @@ class RootData:
             prc_type.append([0.])
         for i in range(vbf_size):
             prc_type.append([1.])
-	    
 
-        nr_pixels=int(AnalyzerSelector.nr_theta)*int(AnalyzerSelector.nr_phi)
+        nr_pixels=ip.nr_theta*ip.nr_phi
         for i in range(tot_size):
-	
+
 	  pic=[]
 	  for j in range(nr_pixels):
 	    pic.append(AnalyzerSelector.entry[i*nr_pixels+j])
-	  
-	
-          pic=np.array(pic)
-	  pic=pic.reshape((int(AnalyzerSelector.nr_theta),int(AnalyzerSelector.nr_phi)))
-	  plt.imshow(pic)
-	  plt.show()
-	  	
-                        
-			
 
-   
-        sys.exit()
-        #print jet_list
+          pic = np.array(pic)
+	  pic = pic.reshape((ip.nr_theta,ip.nr_phi))
+	  #plt.imshow(pic)
+	  #plt.show()
+          pic_list.append(pic)
+
+        print pic_list
         # So far all ggf data are first and all vbf data are after
         # Reshuffle data such that ggf and vbf events appear alternating:
         perm = np.arange(gp.num_examples())
         np.random.seed(1)
         np.random.shuffle(perm)
-        x_vec = np.array(jet_list)[perm]
+        x_vec = np.array(pic_list)[perm]
         y_vec = np.array(prc_type)[perm]
-
+        
         return x_vec.T, y_vec.T, ggf_size, vbf_size

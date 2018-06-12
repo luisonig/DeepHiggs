@@ -53,7 +53,7 @@ def main(ip):
         x_train, y_train, ggf_size, vbf_size = data.load_data_pixels(ip, gp, 'train')
 	
     else:
-        raise KeyError("Allowed 'analysis_type' values are 'obs' and 'jets'")
+        raise KeyError("Allowed 'analysis_type' values are 'obs', 'jets' and 'pixels'")
 
     print(" Size of ggf training sample: %i events" % ggf_size)
     print(" Size of vbf training sample: %i events" % vbf_size)
@@ -71,19 +71,19 @@ def main(ip):
     elif ip.analysis_type == 'jets':
         x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_jets(ip, gp, 'devel')
     elif ip.analysis_type == 'pixels':
-        x_train, y_train, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'devel')	
+        x_devel, y_devel, ggf_size, vbf_size = data.load_data_pixels(ip, gp, 'devel')	
 
     print(" Size of ggf develop sample: %i events" % ggf_size)
     print(" Size of vbf develop sample: %i events" % vbf_size)
 
-    print(" Size of ggf event sample: %i events" % ggf_event_count)
-    print(" Size of vbf event sample: %i events" % vbf_event_count)
-
-    #---[ test XS:
-    # Trial analysis:
-    compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count)
-    #sys.exit(0)
-    #---] test XS
+    if ip.analysis_type == 'obs' or ip.analysis_type == 'jets':
+        print(" Size of ggf event sample: %i events" % ggf_event_count)
+        print(" Size of vbf event sample: %i events" % vbf_event_count)
+    
+        #---[ test XS:
+        # Trial analysis:
+        compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count)
+        #---] test XS
 
     if ip.analysis_type == 'obs':
         y_final = train_obs_new(ip, x_train, y_train, x_devel, y_devel)
@@ -169,6 +169,11 @@ class InputParameters:
                             help='Whether to generate observables scatter plots')
         parser.add_argument('--analysis_type',  dest="analysis_type", default="obs",
                             help="If set to 'obs', high-level observables are used as input variables, if set to 'jets', the four-momenta of the jets are used as input variables")
+        parser.add_argument('--nr_theta', type=int, dest="nr_theta", default=20,
+                            help='Number of pixels in theta.')
+        parser.add_argument('--nr_phi', type=int, dest="nr_phi", default=20,
+                            help='Number of pixels in phi.')
+
 
         args                 = parser.parse_args()
         self.multip          = int(args.MULTIP)
@@ -187,7 +192,9 @@ class InputParameters:
         self.optimizer       = args.optimizer
         self.makeplots       = args.makeplots
         self.analysis_type   = args.analysis_type
-
+        self.nr_theta        = args.nr_theta
+        self.nr_phi          = args.nr_phi
+        
         # parameters set to default
         self.minibatch_size = 128
         self.num_epochs     = self.max_steps
