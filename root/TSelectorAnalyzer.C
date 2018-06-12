@@ -7,6 +7,8 @@
 #include "TSelectorReader.h"
 #include "TSelectorAnalyzer.h"
 #include <vector>
+#include <math.h>
+#include <TH2.h>
 // #include "Rivet/Analysis.hh"
 // #include "Rivet/Tools/Logging.hh"
 // #include "Rivet/Math/Constants.hh"
@@ -98,6 +100,10 @@ bool TSelectorAnalyzer::Process()
   }  else if (runmode == 2){
     // run analysis using jet momenta
     JetsAnalysis();
+    
+  } else if (runmode == 3){
+    // run analysis using pixels, i.e. return parton momenta
+    PixelsAnalysis();  
     
   } else {
     std::cout<<"runmode not valid, abort"<<std::endl;
@@ -304,6 +310,67 @@ void TSelectorAnalyzer::JetsAnalysis()
   }
 }
 
+void TSelectorAnalyzer::PixelsAnalysis()
+{
+  PseudoJetVector particles;
+  
+  Double_t Etot = 0.0;
+
+  for (Int_t j=0; j<get_nparticle(); j++) {
+    Etot+=get_E(j);
+  }
+
+  fastjet::PseudoJet vec1 = fastjet::PseudoJet(0., 0., get_x1()*Etot/(get_x1()+get_x2()), get_x1()*Etot/(get_x1()+get_x2()));
+  vec1.set_user_index(get_id1());
+  fastjet::PseudoJet vec2 = fastjet::PseudoJet(0., 0.,-get_x2()*Etot/(get_x1()+get_x2()), get_x2()*Etot/(get_x1()+get_x2()));
+  vec2.set_user_index(get_id2());
+  particles.push_back(vec1);
+  particles.push_back(vec2);
+
+  // Create and fill particle kinematic arrays:
+  for (Int_t i=0; i<get_nparticle(); i++){
+    fastjet::PseudoJet vec = fastjet::PseudoJet(get_px(i), get_py(i), get_pz(i), get_E(i));
+    vec.set_user_index(get_kf(i));
+    particles.push_back(vec);
+  }
+  
+  
+  double phi, theta, mass, mom;
+  
+  TH2D *pic= new TH2D("pic","pic",nr_theta, 0.0, fastjet::pi, nr_phi, 0.0, 2.0*fastjet::pi);
+  
+    
+  //now returning final state partons 
+
+  for (Int_t i=0; i<get_nparticle(); i++){    
+    fastjet::PseudoJet vec = fastjet::PseudoJet(get_px(i), get_py(i), get_pz(i), get_E(i));
+    //partons.push_back(vec);
+    
+    phi= vec.phi();
+    
+    mom= sqrt(pow(vec.E(),2)-pow(vec.m(),2));
+    theta= acos(vec.pz()/mom);
+    cout<<"theta "<<theta<<" phi "<<phi<<" E "<<vec.E()<<endl;
+    
+    pic->Fill(theta,phi,vec.E() );
+  }
+  
+  //std::pair bin_matrix;//[nr_theta][nr_phi];
+  event_binned +=1;
+  // 0 bin is underflow bin, therefore start at 1
+  for (Int_t i=1; i<=nr_theta; i++){
+      for (Int_t j=1; j<=nr_phi; j++){
+         
+	 entry.push_back(pic->GetBinContent(i,j));
+      }
+  
+  }  
+  
+
+  delete pic;
+  pic=NULL;
+  
+}
 
 
 void TSelectorAnalyzer::PrintEvent(PseudoJetVector particles)

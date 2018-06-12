@@ -41,6 +41,7 @@ class TSelectorAnalyzer : public TSelectorMain
   
   void ObservablesAnalysis();
   void JetsAnalysis();
+  void PixelsAnalysis();
   void PrintEvent(const PseudoJetVector particles);
 
   // Observables vectors for observable based analysis
@@ -65,6 +66,11 @@ class TSelectorAnalyzer : public TSelectorMain
 
   // Observables vectors for jet based analysis
   vector<Double_t> jetsvector;
+  
+  //Partonic events for pixel analysis
+  vector<Double_t> partons;
+  vector<Double_t> entry;
+  int nr_theta, nr_phi;
 
   //--] Analysis stuff:
 

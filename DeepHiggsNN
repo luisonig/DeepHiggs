@@ -48,7 +48,10 @@ def main(ip):
 
     elif ip.analysis_type == 'jets':
         x_train, y_train, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_jets(ip, gp, 'train')
-
+	
+    elif ip.analysis_type == 'pixels':
+        x_train, y_train, ggf_size, vbf_size = data.load_data_pixels(ip, gp, 'train')
+	
     else:
         raise KeyError("Allowed 'analysis_type' values are 'obs' and 'jets'")
 
@@ -67,6 +70,8 @@ def main(ip):
         x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_obs(ip, gp, 'devel')
     elif ip.analysis_type == 'jets':
         x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_jets(ip, gp, 'devel')
+    elif ip.analysis_type == 'pixels':
+        x_train, y_train, ggf_size, vbf_size = data.load_data_jets(ip, gp, 'devel')	
 
     print(" Size of ggf develop sample: %i events" % ggf_size)
     print(" Size of vbf develop sample: %i events" % vbf_size)
@@ -84,6 +89,8 @@ def main(ip):
         y_final = train_obs_new(ip, x_train, y_train, x_devel, y_devel)
     elif ip.analysis_type == 'jets':
         y_final = train_jet_new(ip, x_train, y_train, x_devel, y_devel)
+    elif ip.analysis_type == 'pixels':
+        y_final = train_pixels(ip, x_train, y_train, x_devel, y_devel)
 
 
     if ip.analysis_type == 'obs':

@@ -3,6 +3,7 @@
 import sys
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 __all__ = ['RootData']
 
@@ -316,3 +317,116 @@ class RootData:
         y_vec = np.array(prc_type)[perm]
 
         return x_vec.T, y_vec.T, ggf_size, vbf_size, ggf_event_count, vbf_event_count
+
+
+    def load_data_pixels(self, ip, gp, mode):
+        """
+            Loads data from ROOT NTuples both for training and for test sets
+
+            Arguments:
+            ip -- InputParameter type variable
+            gp -- GlobalParameter type variable
+            mode -- string defining the running more ( can be set equal to 'train' or 'test')
+
+            Returns:
+            x_vec -- numpy-array of shape (n_x, m) with input vectors:
+             m  : number of examples loaded from ntuples (which depends on the applied analysis cuts)
+            n_x : input dimension (for H+2j n_x = 11, H+3j n_x = 13)
+            y_vec -- numpy-array of shape (2, m) with output vectors
+             m  : number of examples loaded from ntuples (which depends on the applied analysis cuts)
+             -> output is a 2-dim one-hot vector (1 0) =: ggf , (0 1) =: vbf
+        """
+
+        # Define reader selector:
+        TReader = ROOT.TSelectorReader()
+
+        # Analysis Selectors:
+        AnalyzerSelector = ROOT.TSelectorAnalyzer()
+        AnalyzerSelector.multip = ip.multip
+        TReader.addSelector(AnalyzerSelector)
+        AnalyzerSelector.runmode = 3
+	AnalyzerSelector.nr_theta=40
+	AnalyzerSelector.nr_phi=40
+	
+
+        prc_type = []
+        pixel_list = []
+
+        # Define chain and add file list:
+        chain = ROOT.TChain("t3")
+
+        if mode == 'train':
+            chain.Add(ip.GGFFILE_TRAIN)
+        elif mode == 'devel':
+            chain.Add(ip.GGFFILE_EVAL)
+        else:
+            raise ValueError("Not valid mode. Mode should be 'train' or 'devel'.")
+
+        chain.GetFile()  # force opening of the first file
+        chain.SetMaxEntryLoop(2**60)
+        if ip.events < 0:
+            chain.Process(TReader, "", chain.GetMaxEntryLoop(), 0)
+        else:
+            chain.Process(TReader, "", int(ip.events), 0)
+
+        ggf_size = int(AnalyzerSelector.event_binned)
+        ggf_event_count = int(AnalyzerSelector.event_count)
+
+        chain = ROOT.TChain("t3")
+        if mode == 'train':
+            chain.Add(ip.VBFFILE_TRAIN)
+        elif mode == 'devel':
+            chain.Add(ip.VBFFILE_EVAL)
+        else:
+            raise ValueError("Not valid mode. Mode should be 'train' or 'devel'.")
+
+        chain.GetFile()  # force opening of the first file
+        chain.SetMaxEntryLoop(2**60)
+        if ip.events < 0:
+            chain.Process(TReader, "", chain.GetMaxEntryLoop(), 0)
+        else:
+            chain.Process(TReader, "", int(ip.events), 0)
+
+        tot_size = int(AnalyzerSelector.event_binned)
+        tot_event_count = int(AnalyzerSelector.event_count)
+        vbf_size = tot_size-ggf_size
+        vbf_event_count = tot_event_count - ggf_event_count
+
+        gp._num_examples = tot_size
+
+        E_beam = 6500
+
+        for i in range(ggf_size):
+            prc_type.append([0.])
+        for i in range(vbf_size):
+            prc_type.append([1.])
+	    
+
+        nr_pixels=int(AnalyzerSelector.nr_theta)*int(AnalyzerSelector.nr_phi)
+        for i in range(tot_size):
+	
+	  pic=[]
+	  for j in range(nr_pixels):
+	    pic.append(AnalyzerSelector.entry[i*nr_pixels+j])
+	  
+	
+          pic=np.array(pic)
+	  pic=pic.reshape((int(AnalyzerSelector.nr_theta),int(AnalyzerSelector.nr_phi)))
+	  plt.imshow(pic)
+	  plt.show()
+	  	
+                        
+			
+
+   
+        sys.exit()
+        #print jet_list
+        # So far all ggf data are first and all vbf data are after
+        # Reshuffle data such that ggf and vbf events appear alternating:
+        perm = np.arange(gp.num_examples())
+        np.random.seed(1)
+        np.random.shuffle(perm)
+        x_vec = np.array(jet_list)[perm]
+        y_vec = np.array(prc_type)[perm]
+
+        return x_vec.T, y_vec.T, ggf_size, vbf_size
