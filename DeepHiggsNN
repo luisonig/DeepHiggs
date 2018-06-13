@@ -21,6 +21,7 @@ from src.util import *
 from src.analysis import *
 from src.obsNN import *
 from src.jetNN import *
+from src.picNN import *
 
 # python 2.4 does not have any and all
 try: any, all

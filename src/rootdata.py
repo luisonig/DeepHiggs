@@ -396,9 +396,9 @@ class RootData:
         E_beam = 6500
 
         for i in range(ggf_size):
-            prc_type.append([0.])
+            prc_type.append(0.)
         for i in range(vbf_size):
-            prc_type.append([1.])
+            prc_type.append(1.)
 
         nr_pixels=ip.nr_theta*ip.nr_phi
         for i in range(tot_size):
@@ -413,7 +413,7 @@ class RootData:
 	  #plt.show()
           pic_list.append(pic)
 
-        print pic_list
+        #print pic_list
         # So far all ggf data are first and all vbf data are after
         # Reshuffle data such that ggf and vbf events appear alternating:
         perm = np.arange(gp.num_examples())
@@ -422,4 +422,4 @@ class RootData:
         x_vec = np.array(pic_list)[perm]
         y_vec = np.array(prc_type)[perm]
         
-        return x_vec.T, y_vec.T, ggf_size, vbf_size
+        return x_vec, y_vec, ggf_size, vbf_size
