@@ -366,7 +366,7 @@ class RootData:
         if ip.events < 0:
             chain.Process(TReader, "", chain.GetMaxEntryLoop(), 0)
         else:
-            chain.Process(TReader, "", int(ip.events), 0)
+            chain.Process(TReader, "", 9*int(ip.events), 0)
 
         ggf_size = int(AnalyzerSelector.event_binned)
         ggf_event_count = int(AnalyzerSelector.event_count)

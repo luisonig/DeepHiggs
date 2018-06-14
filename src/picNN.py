@@ -34,14 +34,14 @@ def train_pixels(ip, x_train, y_train, x_devel, y_devel):
 
     #print x_train.shape
     model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(1,x_train.shape[2],x_train.shape[3]),
+    model.add(Conv2D(16, kernel_size=(3, 3), activation='relu', input_shape=(1,x_train.shape[2],x_train.shape[3]),
     		data_format='channels_first'))
-    model.add(Conv2D(32, 3, 3, activation='relu'))
+    model.add(Conv2D(16, 3, 3, activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(Dropout(0.25))	
+    model.add(Dropout(0.5))	
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))  
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.6))
     model.add(Dense(2, activation='softmax'))	
     model.compile(loss='categorical_crossentropy',
               optimizer='adam',
