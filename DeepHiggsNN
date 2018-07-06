@@ -49,10 +49,10 @@ def main(ip):
 
     elif ip.analysis_type == 'jets':
         x_train, y_train, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_jets(ip, gp, 'train')
-	
+
     elif ip.analysis_type == 'pixels':
         x_train, y_train, ggf_size, vbf_size = data.load_data_pixels(ip, gp, 'train')
-	
+
     else:
         raise KeyError("Allowed 'analysis_type' values are 'obs', 'jets' and 'pixels'")
 
@@ -72,7 +72,7 @@ def main(ip):
     elif ip.analysis_type == 'jets':
         x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count = data.load_data_jets(ip, gp, 'devel')
     elif ip.analysis_type == 'pixels':
-        x_devel, y_devel, ggf_size, vbf_size = data.load_data_pixels(ip, gp, 'devel')	
+        x_devel, y_devel, ggf_size, vbf_size = data.load_data_pixels(ip, gp, 'devel')
 
     print(" Size of ggf develop sample: %i events" % ggf_size)
     print(" Size of vbf develop sample: %i events" % vbf_size)
@@ -80,7 +80,7 @@ def main(ip):
     if ip.analysis_type == 'obs' or ip.analysis_type == 'jets':
         print(" Size of ggf event sample: %i events" % ggf_event_count)
         print(" Size of vbf event sample: %i events" % vbf_event_count)
-    
+
         #---[ test XS:
         # Trial analysis:
         compute_XS(x_devel, y_devel, ggf_size, vbf_size, ggf_event_count, vbf_event_count)
@@ -113,14 +113,14 @@ def main(ip):
            #makeplot(ip,"y_{j_1}", x_devel[5], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
            #makeplot(ip,"d \phi_{j_1,j_2}", x_devel[4], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
 
-           
+
         if ip.makeplots and ip.multip==3:
            y_rewrite=np.array(y_rewrite)
            makeplot(ip,"p_{T,H}", x_devel[0]*6500.0, x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
            makeplot(ip,"m_{j_1,j_2}", x_devel[3]*6500.0, x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
            makeplot(ip,"p_{T,j_1}", x_devel[1]*6500.0, x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
            makeplot(ip,"y_{j_1}", x_devel[5], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
-           makeplot(ip,"d \phi_{j_1,j_2}", x_devel[4], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)           
+           makeplot(ip,"d \phi_{j_1,j_2}", x_devel[4], x_devel[-1], ggf_size, y_devel.transpose(),y_rewrite, ggf_event_count, vbf_event_count)
 
         cut_probability(ip,x_devel,y_final,y_devel, y_rewrite,ggf_event_count, vbf_event_count)
 
@@ -195,7 +195,7 @@ class InputParameters:
         self.analysis_type   = args.analysis_type
         self.nr_theta        = args.nr_theta
         self.nr_phi          = args.nr_phi
-        
+
         # parameters set to default
         self.minibatch_size = 128
         self.num_epochs     = self.max_steps
@@ -204,7 +204,7 @@ class InputParameters:
         self.lambdal2       = 0.001
         self.runname        = self.run_dir
 
-        
+
         try:
             value = int(self.multip)
         except ValueError:

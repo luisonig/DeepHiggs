@@ -16,8 +16,6 @@ TSelectorMain::TSelectorMain()
     event_trials(1), new_event(1)
 {
 
-  // extra alphas powers settings
-  //opt_extra_alphas = 0;
 
 }
 

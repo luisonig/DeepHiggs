@@ -1,4 +1,3 @@
-
 #include <TH2.h>
 #include <TStyle.h>
 #include "TLeaf.h"
@@ -7,23 +6,10 @@
   #include <iostream>
 #endif
 
-//#include <TCanvas.h>
-//#include "TFile.h"
-//#include "TTree.h"
-//#include "TH1F.h"
-//#include "TLorentzVector.h"
-//#include <iostream>
-//#include <math.h>
-//#include <string>
-//#include <sstream>
-//#include <cmath>
-
 #include <fastjet/ClusterSequence.hh>
 
 #include "TSelectorMain.h"
 #include "TSelectorReader.h"
-//#include "LHAGlue.h"
-
 
 TSelectorReader::TSelectorReader(TTree * /*tree*/) : fChain(0)
 {

@@ -13,8 +13,6 @@ class TSelectorAnalyzer : public TSelectorMain
 
   //--[ Overridable methods:
 
-  int get_alphaspower() const { return Int_t(*input_alphaspower) - opt_extra_alphas; }
-
   int  Type();
   void Notify();
   void Init(const TSelectorReader* reader);
@@ -76,13 +74,11 @@ class TSelectorAnalyzer : public TSelectorMain
 
 
   //--[ Member variables:
-  int opt_extra_alphas;     // number of extra alphas powers
 
   //--] Member variables
 
 
   //--[ Reweighting variables:
-
 
   //--] Reweighting variables
 

@@ -9,29 +9,15 @@
 #include <vector>
 #include <math.h>
 #include <TH2.h>
-// #include "Rivet/Analysis.hh"
-// #include "Rivet/Tools/Logging.hh"
-// #include "Rivet/Math/Constants.hh"
-// #include "Rivet/Projections/FinalState.hh"
-// #include "Rivet/Projections/ChargedFinalState.hh"
-// #include "Rivet/Projections/FastJets.hh"
-// #include "Rivet/Projections/IdentifiedFinalState.hh"
-// #include "Rivet/Projections/VisibleFinalState.hh"
-// #include "Rivet/Projections/VetoedFinalState.hh"
-// #include "Rivet/Projections/MissingMomentum.hh"
 
 // --------------------------------------------------------------------------- //
 // Selector
 // --------------------------------------------------------------------------- //
 
 TSelectorAnalyzer::TSelectorAnalyzer()
-  : multip(0), call_count(0.), event_count(0.), event_binned(0.)
-    //  , event_groups(0), new_event(1)
+  : multip(0), call_count(0.), event_count(0.), event_binned(0.),
+    nr_phi(20), nr_theta(20)
 {
-
-  // extra alphas powers settings
-  opt_extra_alphas = 0;
-
 
 }
 
@@ -333,8 +319,6 @@ void TSelectorAnalyzer::PixelsAnalysis()
     vec.set_user_index(get_kf(i));
     particles.push_back(vec);
   }
-  
- 
  
   //now passing final state partons to fastjet
   PseudoJetVector jetinput;
@@ -368,13 +352,10 @@ void TSelectorAnalyzer::PixelsAnalysis()
   }
   if (accept_event){
  
- 
-  
     double phi, theta, mass, mom;
   
     TH2D *pic= new TH2D("pic","pic",nr_theta, 0.0, fastjet::pi, nr_phi, 0.0, 2.0*fastjet::pi);
-  
-    
+   
     //now returning final state partons 
 
     for (Int_t i=0; i<get_nparticle(); i++){    
@@ -401,7 +382,6 @@ void TSelectorAnalyzer::PixelsAnalysis()
   
     }  
   
-
     delete pic;
     pic=NULL;
     

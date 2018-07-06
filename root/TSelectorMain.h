@@ -133,27 +133,20 @@ class TSelectorMain
 
   //--] NTuple access stuff
 
-  /* //--[ Analysis stuff: */
 
-  /* typedef std::vector<fastjet::PseudoJet> PseudoJetVector; */
-  /* fastjet::PseudoJet get_vec(int i) const; */
+  //--[ Analysis stuff:
 
-  /* void TestAnalysis(); */
-  /* void PrintEvent(const PseudoJetVector particles); */
-
-  /* //--] Analysis stuff: */
+  //--] Analysis stuff
 
 
-  /* //--[ Member variables: */
-  /* int opt_extra_alphas;     // number of extra alphas powers */
+  //--[ Member variables:
 
-  /* //--] Member variables */
-
-
-  /* //--[ Reweighting variables: */
+  //--] Member variables
 
 
-  /* //--] Reweighting variables */
+  //--[ Reweighting variables:
+
+  //--] Reweighting variables
 
 
   //--[ Counting events:

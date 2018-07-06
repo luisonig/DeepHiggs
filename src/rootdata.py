@@ -56,9 +56,14 @@ class RootData:
         ROOT.gPluginMgr.AddHandler("TVirtualTreePlayer", "*", "TTreePlayer", "TreePlayer", "TTreePlayer()");
 
         ROOT.gSystem.Load("libfastjet.so")
+        # G.L.: we could add an if for the running mode
+        ROOT.gSystem.Load("libHepMC.so")
+        
         ROOT.gROOT.LoadMacro("root/TSelectorMain.C+")
         ROOT.gROOT.LoadMacro("root/TSelectorAnalyzer.C+")
         ROOT.gROOT.LoadMacro("root/TSelectorReader.C+")
+        # G.L.: we could add an if for the running mode
+        ROOT.gROOT.LoadMacro("root/AnalyzerHepMC.C+")
 
         # We want to handle Ctrl+C
         sh = ROOT.TSignalHandler(ROOT.kSigInterrupt, False)
@@ -297,9 +302,6 @@ class RootData:
 
             # Append at the end weight of the event
             mom_list.append(AnalyzerSelector.weight[i]/norm)
-            #mom_list.append(AnalyzerSelector.pth[i])
-            #mom_list.append(AnalyzerSelector.ptj1[i])
-            #mom_list.append(AnalyzerSelector.ptj2[i])
             #print 'momlist', mom_list
 
             if Etot > 1E-10:
@@ -414,6 +416,94 @@ class RootData:
           pic_list.append(pic)
 
         #print pic_list
+        # So far all ggf data are first and all vbf data are after
+        # Reshuffle data such that ggf and vbf events appear alternating:
+        perm = np.arange(gp.num_examples())
+        np.random.seed(1)
+        np.random.shuffle(perm)
+        x_vec = np.array(pic_list)[perm]
+        y_vec = np.array(prc_type)[perm]
+        
+        return x_vec, y_vec, ggf_size, vbf_size
+
+    def load_data_pixels_shower(self, ip, gp, mode):
+        """
+            Loads data from ROOT NTuples both for training and for test sets
+
+            Arguments:
+            ip -- InputParameter type variable
+            gp -- GlobalParameter type variable
+            mode -- string defining the running more ( can be set equal to 'train' or 'test')
+
+            Returns:
+            x_vec -- numpy-array of shape (n_x, m) with input vectors:
+             m  : number of examples loaded from ntuples (which depends on the applied analysis cuts)
+            n_x : input dimension (for H+2j n_x = 11, H+3j n_x = 13)
+            y_vec -- numpy-array of shape (2, m) with output vectors
+             m  : number of examples loaded from ntuples (which depends on the applied analysis cuts)
+             -> output is a 2-dim one-hot vector (1 0) =: ggf , (0 1) =: vbf
+        """
+
+        Analyzer = ROOT.AnalyzerHepMC()
+        
+        # Analysis Selectors:
+        if mode == 'train':
+            Analyzer.SetFileName(ip.GGFFILE_TRAIN)
+        elif mode == 'devel':
+            Analyzer.SetFileName(ip.GGFFILE_EVAL)
+        else:
+            raise ValueError("Not valid mode. Mode should be 'train' or 'devel'.")
+	Analyzer.nr_theta = ip.nr_theta
+        Analyzer.nr_phi = ip.nr_phi
+    
+        prc_type = []
+        pic_list = []
+
+        # ggf analysis
+        Analyzer.Process(int(ip.events))
+        
+        ggf_size = int(Analyzer.event_binned)
+        ggf_event_count = int(Analyzer.event_count)
+
+        if mode == 'train':
+            Analyzer.SetFileName(ip.VBFFILE_TRAIN)
+        elif mode == 'devel':
+            Analyzer.SetFileName(ip.VBFFILE_EVAL)
+        else:
+            raise ValueError("Not valid mode. Mode should be 'train' or 'devel'.")
+
+        # vbf analysis
+        Analyzer.Process(int(ip.events))
+
+        vbf_size = int(Analyzer.event_binned)
+        vbf_event_count = int(Analyzer.event_count)
+        
+        tot_size = ggf_size + vbf_size
+        tot_event_count = ggf_event_count + vbf_event_count
+
+        gp._num_examples = tot_size
+
+        E_beam = 6500
+
+        for i in range(ggf_size):
+            prc_type.append(0.)
+        for i in range(vbf_size):
+            prc_type.append(1.)
+
+        nr_pixels=ip.nr_theta*ip.nr_phi
+        for i in range(tot_size):
+
+	   pic=[]
+	   for j in range(nr_pixels):
+	     pic.append(AnalyzerSelector.entry[i*nr_pixels+j])
+
+           pic = np.array(pic)
+	   pic = pic.reshape((ip.nr_theta,ip.nr_phi))
+	   plt.imshow(pic)
+	   plt.show()
+           pic_list.append(pic)
+
+        print pic_list
         # So far all ggf data are first and all vbf data are after
         # Reshuffle data such that ggf and vbf events appear alternating:
         perm = np.arange(gp.num_examples())

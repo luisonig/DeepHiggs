@@ -5,8 +5,6 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TSelector.h>
-//#include <array>
-//#include <map>
 
 // Stuff
 
@@ -89,10 +87,6 @@ class TSelectorReader : public TSelector
   TBranch        *b_alphaspower; //!
   TBranch        *b_part;        //!
   
-  /* typedef std::array<int, 6> subprocess; */
-  /* std::map<subprocess, int> h2jsubprocesses; */
-  /* typedef std::vector<fastjet::PseudoJet> PseudoJetVector; */
-  
   virtual Int_t   Version() const {
     return 2;
   }
@@ -129,8 +123,7 @@ class TSelectorReader : public TSelector
   // Constructor & destructor
   TSelectorReader(TTree *tree=0 );
   virtual ~TSelectorReader();
-  
-  //virtual void     FillDictionary();
+
   void addSelector(TSelectorMain* selector);
   
  protected:
@@ -139,195 +132,3 @@ class TSelectorReader : public TSelector
 };
 
 #endif
-
-
-/*
-  void TSelectorReader::FillDictionary()
-  {
-  
-  h2jsubprocesses[{1, 1, 25, 1, 1}] = 1;
-  h2jsubprocesses[{1, -1, 25, 1, -1}] = 2;
-  h2jsubprocesses[{1, -1, 25, 2, -2}] = 12;
-  h2jsubprocesses[{1, -1, 25, 3, -3}] = 12;
-  h2jsubprocesses[{1, -1, 25, 4, -4}] = 12;
-  h2jsubprocesses[{1, -1, 25, 5, -5}] = 12;
-  h2jsubprocesses[{1, -1, 25, 21, 21}] = 5;
-  h2jsubprocesses[{1, 2, 25, 1, 2}] = 13;
-  h2jsubprocesses[{1, -2, 25, 1, -2}] = 14;
-  h2jsubprocesses[{1, 3, 25, 1, 3}] = 13;
-  h2jsubprocesses[{1, -3, 25, 1, -3}] = 14;
-  h2jsubprocesses[{1, 4, 25, 1, 4}] = 13;
-  h2jsubprocesses[{1, -4, 25, 1, -4}] = 14;
-  h2jsubprocesses[{1, 5, 25, 1, 5}] = 13;
-  h2jsubprocesses[{1, -5, 25, 1, -5}] = 14;
-  h2jsubprocesses[{1, 21, 25, 21, 1}] = 6;
-  h2jsubprocesses[{-1, 1, 25, 1, -1}] = 4;
-  h2jsubprocesses[{-1, 1, 25, 2, -2}] = 15;
-  h2jsubprocesses[{-1, 1, 25, 3, -3}] = 15;
-  h2jsubprocesses[{-1, 1, 25, 4, -4}] = 15;
-  h2jsubprocesses[{-1, 1, 25, 5, -5}] = 15;
-  h2jsubprocesses[{-1, 1, 25, 21, 21}] = 7;
-  h2jsubprocesses[{-1, -1, 25, -1, -1}] = 3;
-  h2jsubprocesses[{-1, 2, 25, 2, -1}] = 16;
-  h2jsubprocesses[{-1, -2, 25, -1, -2}] = 17;
-  h2jsubprocesses[{-1, 3, 25, 3, -1}] = 16;
-  h2jsubprocesses[{-1, -3, 25, -1, -3}] = 17;
-  h2jsubprocesses[{-1, 4, 25, 4, -1}] = 16;
-  h2jsubprocesses[{-1, -4, 25, -1, -4}] = 17;
-  h2jsubprocesses[{-1, 5, 25, 5, -1}] = 16;
-  h2jsubprocesses[{-1, -5, 25, -1, -5}] = 17;
-  h2jsubprocesses[{-1, 21, 25, 21, -1}] = 8;
-  h2jsubprocesses[{2,1, 25, 1, 2}] = 18;
-  h2jsubprocesses[{2, -1, 25, 2, -1}] = 14;
-  h2jsubprocesses[{2, 2, 25, 2, 2}] = 1;
-  h2jsubprocesses[{2, -2, 25, 1, -1}] = 12;
-  h2jsubprocesses[{2, -2, 25, 2, -2}] = 2;
-  h2jsubprocesses[{2, -2, 25, 3, -3}] = 12;
-  h2jsubprocesses[{2, -2, 25, 4, -4}] = 12;
-  h2jsubprocesses[{2, -2, 25, 5, -5}] = 12;
-  h2jsubprocesses[{2, -2, 25, 21, 21}] = 5;
-  h2jsubprocesses[{2, 3, 25, 3, 2}] = 18;
-  h2jsubprocesses[{2, -3, 25, 2, -3}] = 14;
-  h2jsubprocesses[{2, 4, 25, 2, 4}] = 13;
-  h2jsubprocesses[{2, -4, 25, 2, -4}] = 14;
-  h2jsubprocesses[{2, 5, 25, 5, 2}] = 18;
-  h2jsubprocesses[{2, -5, 25, 2, -5}] = 14;
-  h2jsubprocesses[{2, 21, 25, 21, 2}] = 6;
-  h2jsubprocesses[{-2, 1, 25, 1, -2}] = 16;
-  h2jsubprocesses[{-2, -1, 25, -1, -2}] = 19;
-  h2jsubprocesses[{-2, 2, 25, 1, -1}] = 15;
-  h2jsubprocesses[{-2, 2, 25, 2, -2}] = 4;
-  h2jsubprocesses[{-2, 2, 25, 3, -3}] = 15;
-  h2jsubprocesses[{-2, 2, 25, 4, -4}] = 15;
-  h2jsubprocesses[{-2, 2, 25, 5, -5}] = 15;
-  h2jsubprocesses[{-2, 2, 25, 21, 21}] = 7;
-  h2jsubprocesses[{-2, -2, 25, -2, -2}] = 3;
-  h2jsubprocesses[{-2, 3, 25, 3, -2}] = 16;
-  h2jsubprocesses[{-2, -3, 25, -3, -2}] = 19;
-  h2jsubprocesses[{-2, 4, 25, 4, -2}] = 16;
-  h2jsubprocesses[{-2, -4, 25, -2, -4}] = 17;
-  h2jsubprocesses[{-2, 5, 25, 5, -2}] = 16;
-  h2jsubprocesses[{-2, -5, 25, -5, -2}] = 19;
-  h2jsubprocesses[{-2, 21, 25, 21, -2}] = 8;
-  h2jsubprocesses[{3, 1, 25, 1, 3}] = 18;
-  h2jsubprocesses[{3, -1, 25, 3, -1}] = 14;
-  h2jsubprocesses[{3, 2, 25, 3, 2}] = 13;
-  h2jsubprocesses[{3, -2, 25, 3, -2}] = 14;
-  h2jsubprocesses[{3, 3, 25, 3, 3}] = 1;
-  h2jsubprocesses[{3, -3, 25, 1, -1}] = 12;
-  h2jsubprocesses[{3, -3, 25, 2, -2}] = 12;
-  h2jsubprocesses[{3, -3, 25, 3, -3}] = 2;
-  h2jsubprocesses[{3, -3, 25, 4, -4}] = 12;
-  h2jsubprocesses[{3, -3, 25, 5, -5}] = 12;
-  h2jsubprocesses[{3, -3, 25, 21, 21}] = 5;
-  h2jsubprocesses[{3, 4, 25, 3, 4}] = 13;
-  h2jsubprocesses[{3, -4, 25, 3, -4}] = 14;
-  h2jsubprocesses[{3, 5, 25, 3, 5}] = 13;
-  h2jsubprocesses[{3, -5, 25, 3, -5}] = 14;
-  h2jsubprocesses[{3, 21, 25, 21, 3}] = 6;
-  h2jsubprocesses[{-3, 1, 25, 1, -3}] = 16;
-  h2jsubprocesses[{-3, -1, 25, -1, -3}] = 19;
-  h2jsubprocesses[{-3, 2, 25, 2, -3}] = 16;
-  h2jsubprocesses[{-3, -2, 25, -3, -2}] = 17;
-  h2jsubprocesses[{-3, 3, 25, 1, -1}] = 15;
-  h2jsubprocesses[{-3, 3, 25, 2, -2}] = 15;
-  h2jsubprocesses[{-3, 3, 25, 3, -3}] = 4;
-  h2jsubprocesses[{-3, 3, 25, 4, -4}] = 15;
-  h2jsubprocesses[{-3, 3, 25, 5, -5}] = 15;
-  h2jsubprocesses[{-3, 3, 25, 21, 21}] = 7;
-  h2jsubprocesses[{-3, -3, 25, -3, -3}] = 3;
-  h2jsubprocesses[{-3, 4, 25, 4, -3}] = 16;
-  h2jsubprocesses[{-3, -4, 25, -3, -4}] = 17;
-  h2jsubprocesses[{-3, 5, 25, 5, -3}] = 16;
-  h2jsubprocesses[{-3, -5, 25, -3, -5}] = 17;
-  h2jsubprocesses[{-3, 21, 25, 21, -3}] = 8;
-  h2jsubprocesses[{4, 1, 25, 1, 4}] = 18;
-  h2jsubprocesses[{4, -1, 25, 4, -1}] = 14;
-  h2jsubprocesses[{4, 2, 25, 2, 4}] = 18;
-  h2jsubprocesses[{4, -2, 25, 4, -2}] = 14;
-  h2jsubprocesses[{4, 3, 25, 3, 4}] = 18;
-  h2jsubprocesses[{4, -3, 25, 4, -3}] = 14;
-  h2jsubprocesses[{4, 4, 25, 4, 4}] = 1;
-  h2jsubprocesses[{4, -4, 25, 1, -1}] = 12;
-  h2jsubprocesses[{4, -4, 25, 2, -2}] = 12;
-  h2jsubprocesses[{4, -4, 25, 3, -3}] = 12;
-  h2jsubprocesses[{4, -4, 25, 4, -4}] = 2;
-  h2jsubprocesses[{4, -4, 25, 5, -5}] = 12;
-  h2jsubprocesses[{4, -4, 25, 21, 21}] = 5;
-  h2jsubprocesses[{4, 5, 25, 5, 4}] = 18;
-  h2jsubprocesses[{4, -5, 25, 4, -5}] = 14;
-  h2jsubprocesses[{4, 21, 25, 21, 4}] = 6;
-  h2jsubprocesses[{-4, 1, 25, 1, -4}] = 16;
-  h2jsubprocesses[{-4, -1, 25, -1, -4}] = 19;
-  h2jsubprocesses[{-4, 2, 25, 2, -4}] = 16;
-  h2jsubprocesses[{-4, -2, 25, -2, -4}] = 19;
-  h2jsubprocesses[{-4, 3, 25, 3, -4}] = 16;
-  h2jsubprocesses[{-4, -3, 25, -3, -4}] = 19;
-  h2jsubprocesses[{-4, 4, 25, 1, -1}] = 15;
-  h2jsubprocesses[{-4, 4, 25, 2, -2}] = 15;
-  h2jsubprocesses[{-4, 4, 25, 3, -3}] = 15;
-  h2jsubprocesses[{-4, 4, 25, 4, -4}] = 4;
-  h2jsubprocesses[{-4, 4, 25, 5, -5}] = 15;
-  h2jsubprocesses[{-4, 4, 25, 21, 21}] = 7;
-  h2jsubprocesses[{-4, -4, 25, -4, -4}] = 3;
-  h2jsubprocesses[{-4, 5, 25, 5, -4}] = 16;
-  h2jsubprocesses[{-4, -5, 25, -5, -4}] = 19;
-  h2jsubprocesses[{-4, 21, 25, 21, -4}] = 8;
-  h2jsubprocesses[{5, 1, 25, 1, 5}] = 18;
-  h2jsubprocesses[{5, -1, 25, 5, -1}] = 14;
-  h2jsubprocesses[{5, 2, 25, 5, 2}] = 13;
-  h2jsubprocesses[{5, -2, 25, 5, -2}] = 14;
-  h2jsubprocesses[{5, 3, 25, 3, 5}] = 18;
-  h2jsubprocesses[{5, -3, 25, 5, -3}] = 14;
-  h2jsubprocesses[{5, 4, 25, 5, 4}] = 13;
-  h2jsubprocesses[{5, -4, 25, 5, -4}] = 14;
-  h2jsubprocesses[{5, 5, 25, 5, 5}] = 1;
-  h2jsubprocesses[{5, -5, 25, 1, -1}] = 12;
-  h2jsubprocesses[{5, -5, 25, 2, -2}] = 12;
-  h2jsubprocesses[{5, -5, 25, 3, -3}] = 12;
-  h2jsubprocesses[{5, -5, 25, 4, -4}] = 12;
-  h2jsubprocesses[{5, -5, 25, 5, -5}] = 2;
-  h2jsubprocesses[{5, -5, 25, 21, 21}] = 5;
-  h2jsubprocesses[{5, 21, 25, 21, 5}] = 6;
-  h2jsubprocesses[{-5, 1, 25, 1, -5}] = 16;
-  h2jsubprocesses[{-5, -1, 25, -1, -5}] = 19;
-  h2jsubprocesses[{-5, 2, 25, 2, -5}] = 16;
-  h2jsubprocesses[{-5, -2, 25, -5, -2}] = 17;
-  h2jsubprocesses[{-5, 3, 25, 3, -5}] = 16;
-  h2jsubprocesses[{-5, -3, 25, -3, -5}] = 19;
-  h2jsubprocesses[{-5, 4, 25, 4, -5}] = 16;
-  h2jsubprocesses[{-5, -4, 25, -5, -4}] = 17;
-  h2jsubprocesses[{-5, 5, 25, 1, -1}] = 15;
-  h2jsubprocesses[{-5, 5, 25, 2, -2}] = 15;
-  h2jsubprocesses[{-5, 5, 25, 3, -3}] = 15;
-  h2jsubprocesses[{-5, 5, 25, 4, -4}] = 15;
-  h2jsubprocesses[{-5, 5, 25, 5, -5}] = 4;
-  h2jsubprocesses[{-5, 5, 25, 21, 21}] = 7;
-  h2jsubprocesses[{-5, -5, 25, -5, -5}] = 3;
-  h2jsubprocesses[{-5, 21, 25, 21, -5}] = 8;
-  h2jsubprocesses[{21, 1, 25, 21, 1}] = 9;
-  h2jsubprocesses[{21, -1, 25, 21, -1}] = 10;
-  h2jsubprocesses[{21, 2, 25, 21, 2}] = 9;
-  h2jsubprocesses[{21, -2, 25, 21, -2}] = 10;
-  h2jsubprocesses[{21, 3, 25, 21, 3}] = 9;
-  h2jsubprocesses[{21, -3, 25, 21, -3}] = 10;
-  h2jsubprocesses[{21, 4, 25, 21, 4}] = 9;
-  h2jsubprocesses[{21, -4, 25, 21, -4}] = 10;
-  h2jsubprocesses[{21, 5, 25, 21, 5}] = 9;
-  h2jsubprocesses[{21, -5, 25, 21, -5}] = 10;
-  h2jsubprocesses[{21, 21, 25, 1, -1}] = 11;
-  h2jsubprocesses[{21, 21, 25, 2, -2}] = 11;
-  h2jsubprocesses[{21, 21, 25, 3, -3}] = 11;
-  h2jsubprocesses[{21, 21, 25, 4, -4}] = 11;
-  h2jsubprocesses[{21, 21, 25, 5, -5}] = 11;
-  h2jsubprocesses[{21, 21, 25, 21, 21}] = 0;
-  
-  return;
-}
-
-*/
-
-/* #if defined(__MAKECINT__) */
-/* #pragma link C++ class fastjet::JetDefinition; */
-/* #endif */
-
